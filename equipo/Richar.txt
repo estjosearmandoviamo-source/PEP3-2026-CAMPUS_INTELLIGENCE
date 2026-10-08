@@ -1,0 +1,5 @@
+Nombre: Richard 
+Apellido: Hinojosa Poquechoque 
+Grupo: Campus Intelligence
+Rol : Desarrollador de Interfaz y Documentación
+Encargado de la interfaz visual del sistema (cómo se muestra la información de ocupación al usuario — por ejemplo, un panel simple o visualización de los datos), y de apoyar en la redacción y organización de los informes y la documentación del proyecto.
