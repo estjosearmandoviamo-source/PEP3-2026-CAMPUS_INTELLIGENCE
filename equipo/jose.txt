@@ -1,0 +1,8 @@
+Nombre: Jose
+Apellido: Via Montaño
+Grupo: CAMPUS INTELLIGENCE
+Rol o responsabilidad principal:
+Rol: Líder Técnico / Desarrollador Principal
+Responsable del desarrollo central del sistema: implementación del módulo de visión por computadora (detección y tracking con YOLO/OpenCV), 
+diseño e implementación de la base de datos en PostgreSQL, integración de ambos componentes, y coordinación general del proyecto (planificación de etapas y cronograma).
+También responsable de las pruebas técnicas y validación del funcionamiento del sistema.
