@@ -36,37 +36,37 @@ tracks = {}
 provisionales  ={}
 
 # titempo máximo que una persona puede permanecer perdida
-tiempo_maximo_perdido = 60         # 1 minuto
+tiempo_maximo_perdido = 60      # 1 minuto
 tiempo_eliminacion_tracks = 540    # 9 min más → ~10 min en total
 tiempo_eliminacion_provisonal = 5
 
 
-# def Registrar_Evento(tipo, id_persona, hora, permanencia):
-#     horadb= datetime.fromtimestamp(hora)
-#     if tipo == "ENTRADA":
-#         print(
-#                         f"========== EVENTO ==========\n"
-#                         f"EVENTO     : ENTRADA\n"
-#                         f"IDENTIDAD  : {id_persona}\n"
-#                         f"HORA       : {datetime.fromtimestamp(hora).strftime('%H:%M:%S')}\n"
-#                         f"============================"
-#             )
+def Registrar_Evento(tipo, id_persona, hora, permanencia):
+    horadb= datetime.fromtimestamp(hora)
+    if tipo == "ENTRADA":
+        print(
+                        f"========== EVENTO ==========\n"
+                        f"EVENTO     : ENTRADA\n"
+                        f"IDENTIDAD  : {id_persona}\n"
+                        f"HORA       : {datetime.fromtimestamp(hora).strftime('%H:%M:%S')}\n"
+                        f"============================"
+            )
 
-#     elif tipo == "SALIDA":
-#         print(
-#                         f"========== EVENTO ==========\n"
-#                         f"EVENTO     : SALIDA\n"
-#                         f"IDENTIDAD  : {id_persona}\n"
-#                         f"HORA       : {datetime.fromtimestamp(hora).strftime('%H:%M:%S')}\n"
-#                         f"PERMANENCIA: {permanencia:.1f} segundos\n"
-#                         f"============================")
-#     try:
-#         CURSOR.execute("""INSERT INTO EVENTOS (ID_PERSONA, TIPO, HORA, PERMANECIA, AULA_ID) VALUES (%s, %s, %s, %s, %s)""",
-#                        (id_persona, tipo , horadb, permanencia, 1 ))
-#         CONEXION.commit()
-#     except Exception as e:
-#         print("❌ ERROR AL GUARDAR EL EVENTO EN LA BASE DE DATOS: \n", e)
-#         CONEXION.rollback()
+    elif tipo == "SALIDA":
+        print(
+                        f"========== EVENTO ==========\n"
+                        f"EVENTO     : SALIDA\n"
+                        f"IDENTIDAD  : {id_persona}\n"
+                        f"HORA       : {datetime.fromtimestamp(hora).strftime('%H:%M:%S')}\n"
+                        f"PERMANENCIA: {permanencia:.1f} segundos\n"
+                        f"============================")
+    try:
+        CURSOR.execute("""INSERT INTO EVENTOS (ID_PERSONA, TIPO, HORA, PERMANECIA, AULA_ID) VALUES (%s, %s, %s, %s, %s)""",
+                       (id_persona, tipo , horadb, permanencia, 1 ))
+        CONEXION.commit()
+    except Exception as e:
+        print("❌ ERROR AL GUARDAR EL EVENTO EN LA BASE DE DATOS: \n", e)
+        CONEXION.rollback()
 
 def Registrar_Ocupacion(aula_id, hora, cantidad_perso, porcentaje_ocupacion, estado):
     try:
@@ -185,7 +185,7 @@ while True:
 
             ahora = time.time()
              
-         # ------------------------------------------------
+         # ------
             #OBTENEMOS LAS CORDENADAS DE ÑLA CAJA
             x1, y1, x2, y2 = caja.xyxy[0]
 
@@ -269,7 +269,7 @@ while True:
             #decidir si es una persona conocida
             persona_conocida = False
 
-            id_mostrar = id_persona#por defecto
+            id_mostrar = None#ya que solo quiero que veamos a identidadesd comfirmanmdas 
             if not id_encontrado:
                 if mejor_similitud >= reid.Umbral:
                    persona_conocida = True
@@ -285,6 +285,8 @@ while True:
                 if tracks[id_identificado]["estado"] == "perdido":
                     tracks[id_identificado]["entrada"] = ahora
                     tracks[id_identificado]["salida"] = None
+
+                    Registrar_Evento("ENTRADA", id_identificado, ahora , 0)
 
 
                 tracks[id_identificado]["ultimo_visto"] = ahora
@@ -320,7 +322,7 @@ while True:
                         id_mostrar = identidad_nueva
                         print(f"ID {identidad_nueva} NUEVO CONFIRMADP")
 
-                        # Registrar_Evento("ENTRADA", identidad_nueva, ahora , 0)
+                        Registrar_Evento("ENTRADA", identidad_nueva, ahora , 0)
 
           
                 else:
@@ -358,53 +360,29 @@ while True:
                             id_mostrar = identidad_nueva
                             print(f"ID {identidad_nueva} NUEVO CONFIRMADP")
 
-                            # Registrar_Evento("ENTRADA", identidad_nueva, ahora, 0 )
+                            Registrar_Evento("ENTRADA", identidad_nueva, ahora, 0 )
 
                             
 
                     else:
                         
                           provisionales[id_persona] = {"embedding": embedding, "ultimo_visto": ahora, "primera_vez": ahora}
-                        # provisionales[id_persona] = {"observacion": 1, "embedding": embedding, "ultimo_visto": ahora, "primera_vez": ahora}
-                        # if provisionales[id_persona]["observacion"] >= 3:
-
-                        #     identidad_nueva = siguiente_id_identidad
-                        #     siguiente_id_identidad += 1
-                        
-                        #     tracks[identidad_nueva] = {
-                        #                                     "entrada": ahora,
-                        #                                     "ultimo_visto": ahora,
-                        #                                     "ultima_huella":ahora,
-                        #                                     "salida": None,
-                        #                                     "tiempo_perdido": None,
-                        #                                     "estado": "activo",
-                        #                                     "embedding": embedding,
-                        #                                     "id_identidad": identidad_nueva,
-                        #                                     "id_yolo":id_persona
-                        #                                 }
-                        #     identidades_actuales.append(identidad_nueva)
-                        #     del provisionales[id_persona]
-                        #     id_mostrar = identidad_nueva
-                        #     print(f"ID {identidad_nueva} NUEVO CONFIRMADP")
-
-                        #     # Registrar_Evento("ENTRADA", identidad_nueva, ahora, 0 )
-
-
+                     
                 
-                 # MOSTRAR ID EN LA IMAGEN
-           
-            cv2.putText(
-                        frame_resultados,
-                        f"ID: {id_mostrar}",
-                        (int(x1)+42, int(y1) - 5),
-                        cv2.FONT_HERSHEY_SIMPLEX,
-                        1,
-                        (0, 255, 0),
-                        1
-                        )
-            
+                #m MOSTRAR ID EN LA IMAGEN
+            if id_mostrar is not None:
 
-    # 5. REVISAR TRACKS PERDIDOS
+                cv2.putText(
+                                        frame_resultados,
+                                        f"ID: {id_mostrar}",
+                                        (int(x1)+42, int(y1) - 5),
+                                        cv2.FONT_HERSHEY_SIMPLEX,
+                                        1,
+                                        (0, 255, 0),
+                                        1
+                                        )
+            
+    # REVISAR TRACKS PERDIDOS
     ahora = time.time()
     ids_a_eliminar = []
 
@@ -429,7 +407,7 @@ while True:
                         f"ID {id_persona} PERDIDO"
                     )
 
-                    # Registrar_Evento("SALIDA", id_persona, datos["salida"], permanencia )
+                    Registrar_Evento("SALIDA", id_persona, datos["salida"], permanencia )
                 
                   
 
