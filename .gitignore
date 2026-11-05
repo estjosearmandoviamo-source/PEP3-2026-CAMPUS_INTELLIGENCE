@@ -1,22 +1,6 @@
-# Archivos de entorno y secretos
 .env
 .env.*
-
-# Entornos virtuales
-.venv/
-venv/
-
-# Archivos generados
+!.env.example
+venv_rostros/
 __pycache__/
-*.pyc
-
-# IDE / sistema operativo
 .vscode/
-.vs/
-.idea/
-.DS_Store
-Thumbs.db
-
-# Compilaciones
-bin/
-obj/
