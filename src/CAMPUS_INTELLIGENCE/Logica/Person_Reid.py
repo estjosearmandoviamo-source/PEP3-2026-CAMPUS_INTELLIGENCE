@@ -22,20 +22,11 @@ class PersonReID:
        
         
         # #PASO 3 DECIRLE QUE USE EL DIPOSITIVOQUESELECCIONAMOSYA QUE POR DEFECTO VIENE EN CPU 
-        # self.modelo = self.modelo.to(self.dispositivo)
-        # # Modo evaluación = MODELO YA ENTRENADO Y NO EN MODO DE ENTRENAR
-        # self.modelo.eval()
-        # print("Dispositivo ReID:", next(self.modelo.parameters()).device)
         # Mover el modelo al dispositivo seleccionado
         self.modelo = self.modelo.to(self.dispositivo)
+  # # Modo evaluación = MODELO YA ENTRENADO Y NO EN MODO DE ENTRENAR
 
-# Modo evaluación
         self.modelo.eval()
-
-# Comprobar dónde está funcionando realmente OSNet
-        print("Dispositivo ReID:", next(self.modelo.parameters()).device)
-
-
 
 
     #ADAPTACION DEL IMAGEN YA QUE EL FRAME QUE NOS DA OPENCV ES DIFERENTE

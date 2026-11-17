@@ -4,3 +4,6 @@
 venv_rostros/
 __pycache__/
 .vscode/
+.venv_campus/
+opencode.json
+local.txt

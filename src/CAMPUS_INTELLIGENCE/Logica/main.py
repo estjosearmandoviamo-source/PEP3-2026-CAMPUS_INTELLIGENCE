@@ -2,10 +2,16 @@ import cv2
 from ultralytics import YOLO
 import time
 from datetime import datetime
-from aula import AULAS
-from person_id import PersonReID
-from Conexion_DB import conectar
+from pathlib import Path
+from CAMPUS_INTELLIGENCE.Logica.Aulas import AULAS
+from CAMPUS_INTELLIGENCE.Logica.Person_Reid import PersonReID
+from CAMPUS_INTELLIGENCE.Base_Datos.Conexion_DB import conectar
 import torch
+from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.detector import DetectorFacial
+from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.Comparar_Rostros import ComparadorRostros
+from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.Capturar_Rostro import CapturarRostro
+from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.registro_rostroBD import RostrosDB
+from scipy.spatial import Delaunay
 
 
 
@@ -15,7 +21,8 @@ camara = cv2.VideoCapture(0)
 # #PONER VENTANA EN PANTALLA COMPLETA
 # cv2.setWindowProperty("VisionCampus", cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
 #MODELO
-modelo = YOLO("yolo11n.pt")#s, m
+ruta_modelo = Path(__file__).resolve().parent.parent / "Modelos" / "yolo11n.pt"
+modelo = YOLO(str(ruta_modelo))
 
 #CLASE DE LAS AULAS
 aula1 = AULAS("AULA-P6", 30)
@@ -23,9 +30,17 @@ aula1 = AULAS("AULA-P6", 30)
 #CLASE REIDENTIFICADOR
 reid = PersonReID()
 
-#BASE DEDATROS
-CONEXION = conectar()
-CURSOR = CONEXION.cursor()
+#CLASES PARA RECONOCIMIENTO FACIAL
+detector_facial = DetectorFacial()
+registro_rostroBD = RostrosDB()
+comparador_rostros = ComparadorRostros()
+comparador_rostros.cargar_desde_base(registro_rostroBD)
+capturador_rostros = CapturarRostro(
+    detector_facial,
+    comparador_rostros,
+    registro_rostroBD
+)
+
 
 # Historial de ocupación
 historial = []
@@ -40,6 +55,18 @@ tiempo_maximo_perdido = 60      # 1 minuto
 tiempo_eliminacion_tracks = 540    # 9 min más → ~10 min en total
 tiempo_eliminacion_provisonal = 5
 
+siguiente_id_identidad = 1
+tiempo_cambio_huellas = 1.0
+
+segundos_para_confirmar_entidad_nueva = 3.0
+
+# CONTADOR TEMPORAL (después lo borramos)
+contador_embeddings = 0
+inicio_conteo = time.time()
+frames_fps = 0   # cuenta cuántos frames se procesan
+#BASE DEDATROS
+CONEXION = conectar()
+CURSOR = CONEXION.cursor()#sqlcomman oseanos permite enviar las instrucciones
 
 def Registrar_Evento(tipo, id_persona, hora, permanencia):
     horadb= datetime.fromtimestamp(hora)
@@ -96,22 +123,16 @@ def porcentaje_solapamiento(caja_a, caja_b):
 
     return area_tapadaa / area_de_a  
 
-siguiente_id_identidad = 1
-tiempo_cambio_huellas = 1.0
+empezar_dibujo_reconocimiento = False   # empieza apagado
 
-segundos_para_confirmar_entidad_nueva = 3.0
-
-# CONTADOR TEMPORAL (después lo borramos)
-contador_embeddings = 0
-inicio_conteo = time.time()
 while True:
-
+    
     ret, frame = camara.read()
    
     if not ret:
         print("No se pudo obtener imagen de la cámara.")
         break
-
+    frames_fps += 1   # un frame más procesado
    
     resultados = modelo.track(
     frame,
@@ -185,7 +206,7 @@ while True:
 
             ahora = time.time()
              
-         # ------
+     
             #OBTENEMOS LAS CORDENADAS DE ÑLA CAJA
             x1, y1, x2, y2 = caja.xyxy[0]
 
@@ -260,7 +281,6 @@ while True:
                 embedding_guardado = datos["embedding"]
                 
                 similitud = reid.COMPARAR_EMBEDDING(embedding_guardado, embedding)
-                print(f"COMPARANDO con {id_guardado} | similitud: {similitud:.2f} | umbral:{reid.Umbral}")
                 if similitud > mejor_similitud:
                     mejor_similitud = similitud
                     
@@ -475,16 +495,83 @@ while True:
    
         Registrar_Ocupacion(1, hora_actual, aula1.personas, aula1.ocupacion, aula1.estado)
 
-    # MSTRAR CÁMARA
+
+
+    if empezar_dibujo_reconocimiento:
+        rostros = detector_facial.detectar(frame)        
+        for rostro in rostros:                           
+            puntos = rostro.landmark_2d_106#(X,Y)CADAPUNTO
+
+            triangulos = Delaunay(puntos)# 
+            #le pasamos nuestros puntos y los conecta para forma triangulo y nodevuelve los índices de los puntos que le entragamos para formar el triangilo
+            capa = frame_resultados.copy()   #copia de la imagen del framne actual
+
+            for punto_para_formar in triangulos.simplices:#contiene los ndices de los puntos que forman cada triángulo
+                #tambien funciona en listas el desempaquetad
+                indice_a, indice_b, indice_c = punto_para_formar
+           
+                a = puntos[indice_a]
+                b = puntos[indice_b]
+                c = puntos[indice_c]
+
+                # dibujamos enla copia del farme 
+                cv2.line(capa, (int(a[0]), int(a[1])), (int(b[0]), int(b[1])), (0, 255, 255), 1)
+
+                cv2.line(capa, (int(b[0]), int(b[1])), (int(c[0]), int(c[1])), (0, 255, 255), 1)
+
+                cv2.line(capa, (int(c[0]), int(c[1])), (int(a[0]), int(a[1])), (0, 255, 255), 1)
+
+            cv2.addWeighted(capa, 0.4, frame_resultados, 0.6, 0, frame_resultados)
+
+            nombre, similitud  = comparador_rostros.comparar(rostro.embedding)   
+            if nombre is None:
+                nombre = "no conocido"
+
+            x1, y1, x2, y2 = rostro.bbox   
+
+            cv2.rectangle(             frame_resultados, 
+                                        (int(x1), int(y1)), 
+                                        (int(x2), int(y2)), 
+                                        (255, 0, 0),
+                                         2)
+            
+            cv2.putText(                frame_resultados, 
+                                        F"{nombre}|{similitud:.2f}", 
+                                        (int(x1), int(y1) - 10),
+                                         cv2.FONT_HERSHEY_SIMPLEX, 1, 
+                                         (0, 255, 0),
+                                         1)
+
+            for punto_rostro in rostro.kps:
+                x, y = punto_rostro
+
+                cv2.circle(frame_resultados, 
+                           (int(x), int(y)), 3, 
+                           (0, 0, 255), 
+                           -1)
+
+            for punto_rostro in rostro.landmark_2d_106:
+                            x, y = punto_rostro
+            
+  
+                            cv2.circle(frame_resultados, 
+                                       (int(x), int(y)), 1, 
+                                       (0, 255, 0),
+                                         -1)
+    
+   # MSTRAR CÁMARA
     nuevo = cv2.resize(
         frame_resultados,
         (1000, 600)
     )
 
-    if time.time() - inicio_conteo >= 5:
-        print(f"EMBEDDINGS calculados en 5 s: {contador_embeddings}")
-        contador_embeddings = 0
-        inicio_conteo = time.time()
+    segundos = time.time() - inicio_conteo
+    if segundos >= 5:
+       print(f"EMBEDDINGS calculados en 5 s: {contador_embeddings}")
+       print(f"FPS: {frames_fps / segundos:.1f}")   # frames entre segundos
+       contador_embeddings = 0
+       frames_fps = 0
+       inicio_conteo = time.time()
     cv2.imshow(
         "VisionCampus",
         nuevo
@@ -492,9 +579,32 @@ while True:
 
     
     tecla = cv2.waitKey(1)
-   
+ 
+    # REGISTRO FACIAL
+    if tecla == ord("r") or tecla == ord("R"):
+
+       nombre = input("Ingrese el nombre de la persona: ")
+
+       ret_registro, frame_registro = camara.read()
+
+       if ret_registro:
+            capturador_rostros.registrar_Rostro(
+            nombre,
+            frame_registro
+        )
+       else:
+            print("No se pudo capturar la imagen.")
+            
+# EMPEZAR A DIBUJAR RECONOCIMIENTOP
+
+    if tecla == ord("c") or tecla == ord("C"):
+        empezar_dibujo_reconocimiento = not empezar_dibujo_reconocimiento
+
+
+       
+    #ACABAR SISTEMA
     if tecla == ord("q"):
-        break
+        break  
 
 
 # FINAaaLIZAR PROGRAMA
@@ -503,6 +613,7 @@ cv2.destroyAllWindows()
 #CERRaaAR CONEXION CON LA BASE
 CURSOR.close()
 CONEXION.close()
+
 
 # mostraar historial al termiaanar
 print("\nHISTORIAL DE PERSONAS\n")

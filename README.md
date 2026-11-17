@@ -4,6 +4,8 @@ Repositorio central del proyecto **Campus Intelligence**.
 
 ## Estructura actual
 
+
+
 - `documentos/` — documentación del proyecto. El informe actual se encuentra en `documentos/proyecto/`.
 - `base de datos/` — archivos relacionados con la base de datos.
 - `pruebas/` — pruebas del proyecto.
