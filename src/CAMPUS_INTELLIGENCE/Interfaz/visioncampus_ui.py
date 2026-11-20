@@ -13,9 +13,10 @@ from PySide6.QtWidgets import (
     QMessageBox,
     QPushButton,
     QSlider,
-    QStackedWidget,
-    QTableWidget,
+    QStackedWidget,QCheckBox,
+    QTableWidget,QWidget,QHBoxLayout,QTableWidgetItem
 )
+
 from PySide6.QtCore import QFile, QIODevice, Qt
 from PySide6.QtGui import QImage, QPixmap
 
@@ -27,12 +28,12 @@ from PySide6.QtGui import QImage, QPixmap
 # Carpeta donde se encuentran los archivos de la interfaz.
 CARPETA = Path(__file__).resolve().parent
 
-# Accedemos a la carpeta principal del proyecto.
-sys.path.insert(0, str(CARPETA.parent))
+RUTA_SRC = CARPETA.parent.parent
 
+sys.path.insert(0, str(RUTA_SRC)) # carpeta src
 from CAMPUS_INTELLIGENCE.Adaptador_Interfaz.Capturador_De_Frames import ProcesadorCamara
-
-
+from CAMPUS_INTELLIGENCE.Base_Datos.Conexion_DB import conectar
+from PySide6.QtWidgets import QTableWidgetItem
 # ============================================================
 # 2. CARGAR LA INTERFAZ GRÁFICA
 # ============================================================
@@ -184,17 +185,88 @@ def actualizar_estadisticas(
 
     personas = ventana.findChild(QLabel, "valorDetectadas")
     ocupacion = ventana.findChild(QLabel, "valorOcupacion")
+    reconocidas = ventana.findChild(QLabel, "valorReconocidas")
 
     if personas is not None:
         personas.setText(str(datos["personas"]))
 
     if ocupacion is not None:
         ocupacion.setText(f'{datos["ocupacion"]:.1f}%')
+    if reconocidas is not None:
+            reconocidas.setText(str(datos["reconocidas"]))
 
 
+def cargar_personas(ventana):
+
+    tabla = ventana.findChild(QTableWidget, "tablaPersonas")
+
+    if tabla is None:
+        return
+
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        cursor.execute("""
+            SELECT id_rostro, nombre, fecha_registro, autorizado
+            FROM rostros_registrados
+        """)
+
+        registros = cursor.fetchall()
+
+        tabla.setRowCount(len(registros))
+        etiqueta_total = ventana.findChild(QLabel, "totalPersonas")
+
+        if etiqueta_total is not None:
+           etiqueta_total.setText(f"Total de personas: {len(registros)}")
+
+        for fila, registro in enumerate(registros):
+
+            id_rostro, nombre, fecha, autorizado = registro
+
+            item_nombre = QTableWidgetItem(str(nombre.upper()))
+            item_nombre.setTextAlignment(Qt.AlignCenter)
+            tabla.setItem(fila, 0, item_nombre)
+
+            item_fecha = QTableWidgetItem(fecha.strftime("%d/%m/%Y %H:%M"))
+            item_fecha.setTextAlignment(Qt.AlignCenter)
+            tabla.setItem(fila, 1, item_fecha)
+
+            texto_autorizacion = "Autorizado" if autorizado else "No autorizado"
+            item_autorizacion = QTableWidgetItem(texto_autorizacion)
+            item_autorizacion.setTextAlignment(Qt.AlignCenter)
+            tabla.setItem(fila, 2, item_autorizacion)
+
+            boton = QPushButton("⋮")
+            boton.setObjectName("botonAccion")
+            boton.setProperty("id_rostro", id_rostro)
+
+            contenedor = QWidget()
+            disposicion = QHBoxLayout(contenedor)
+            disposicion.setContentsMargins(0, 0, 0, 0)
+            disposicion.setAlignment(Qt.AlignCenter)
+            disposicion.addWidget(boton)
+
+            tabla.setCellWidget(fila, 3, contenedor)
+
+    except Exception as error:
+        QMessageBox.critical(
+            ventana,
+            "Error al cargar personas",
+            f"No se pudieron obtener los registros:\n{error}"
+        )
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+
+        if conexion is not None:
+            conexion.close()
 
 def iniciar_camara(ventana: QMainWindow) -> None:
-    ventana.procesador = None
     if ventana.procesador is not None:
         return
 
@@ -202,12 +274,15 @@ def iniciar_camara(ventana: QMainWindow) -> None:
     ventana.procesador = procesador#agreganos un atributo a nuestra venata que haga referencai a un nuestro objeto
     #concepto nuevo de POO
 
-    vista = ventana.findChild(QLabel, "textoVistaVacia")#para lueo poner una imagen encima dese label
+    vista_Monitoreo = ventana.findChild(QLabel, "textoVistaVacia")#para lueo poner una imagen encima dese label
+    vista_registro_facial = ventana.findChild(QLabel, "textoRostroVacio")
+
+    vistas = [vista_Monitoreo, vista_registro_facial]
     estado = ventana.findChild(QLabel, "estadoCamara")
 
     def mostrar_imagen(frame):
 
-        alto, ancho, canales = frame.shape#bgr o canales de color yvcahpe es forma
+        alto, ancho, canales = frame.shape#bgr o canales de color y shape es forma
        #conversiones opncv formanto nmpy
         imagen = QImage(
             frame.data,
@@ -219,20 +294,27 @@ def iniciar_camara(ventana: QMainWindow) -> None:
 
         pixmap = QPixmap.fromImage(imagen)#es uan hermanienta de qt para mostrar imagenes osea es que es como Qlabel
         #recibe un objeto de ese tippo 
-        vista.setPixmap(
+        for vista in vistas:
+
+            vista.setPixmap(
             pixmap.scaled(
                 vista.size(),
                 Qt.AspectRatioMode.KeepAspectRatio,
                 Qt.TransformationMode.SmoothTransformation
             )
         )
-        # vista.setScaledContents(True)
-        # vista.setPixmap(pixmap)
         #scaled permite cambiar el tamano de nuestra imagebn
   
     def mostrar_error(mensaje):
         estado.setText("● Cámara desconectada")
         QMessageBox.warning(ventana, "Error de cámara", mensaje)
+    def mostrar_resultado_registroDeRostro(exito, mensaje):
+        if exito:
+            QMessageBox.information(ventana, "Registro FACIALL", mensaje)
+
+        else:
+            QMessageBox.warning(ventana, "Registro FACIALL", mensaje)
+
 
     # Liberamos la referencia cuando el trabajador termina.
     def limpiar_procesador():
@@ -240,7 +322,7 @@ def iniciar_camara(ventana: QMainWindow) -> None:
             ventana.procesador = None#eliminamos la refenrecia
 
     procesador.nueva_imagen.connect(mostrar_imagen)
-
+    procesador.registro_terminado.connect(mostrar_resultado_registroDeRostro)
     procesador.estadisticas.connect(
     lambda datos: actualizar_estadisticas(ventana, datos)
 )
@@ -271,28 +353,39 @@ def detener_camara(ventana: QMainWindow) -> None:
 
 
 def capturar_rostro(ventana: QMainWindow) -> None:
-    """Captura un rostro para el registro de una persona."""
+   estado = ventana.findChild(QLabel, "estadoCaptura")
 
-    pendiente(
-        ventana,
-        "Capturar rostro",
-        "Conecta aquí tu clase CapturarRostro."
-    )
+   if ventana.procesador is None :
+        estado.setText("ENCUENDE LA CAMRA PRIMERO PORFAVOR")
+        return
+   core =ventana.procesador.core
+   ventana.frame_capturado = core.ultimo_frame.copy()
+   estado.setText("CAPTURADA CORRECTAMNETE")
+    
 
 
 def guardar_registro(ventana: QMainWindow) -> None:
-    """
-    Guarda los datos de una persona y su rostro.
+    campo_nombre = ventana.findChild(QLineEdit, "campoNombre")
+    chek_permiso = ventana.findChild(QCheckBox , "checkConsentimiento")
 
-    Aquí conectarás los campos del formulario y PostgreSQL.
-    También validarás el consentimiento antes de guardar.
-    """
+    nombre = campo_nombre.text().strip()
 
-    pendiente(
-        ventana,
-        "Guardar registro",
-        "Conecta aquí el guardado de persona y rostro en la base de datos."
-    )
+    if nombre == "":
+        QMessageBox.warning(ventana, "REGISTRO FACIAL ","NO SE PERMITEN CAMPOS VACIOS ")
+        return
+
+    if not  chek_permiso.isChecked():
+         QMessageBox.warning(ventana, "REGISTRO FACIAL ","FALTA LA AUTORIZACION DE L A[PERSONA] ")
+         return
+
+    if ventana.frame_capturado is None :
+                QMessageBox.warning(ventana,"REGISTRO FACIAL ", "PRIMEWRO CAPTURA EL CAPTURA EL ROSTRO DE LA PERSPON ")
+                return
+    if ventana.procesador is None:
+                 QMessageBox.warning(ventana, "REGISTRO FACIAL ","PRIMERO DEBVES PRENDE RLA CAMARA ")
+                 return
+    ventana.procesador.registro_pendiente = nombre
+
 
 
 def guardar_configuracion(ventana: QMainWindow) -> None:
@@ -334,8 +427,7 @@ def pendiente(
 # ============================================================
 
 def conectar_logica(ventana: QMainWindow) -> None:#types hints o anotacions de tipos sriven para comprender el codigo pero python no nos obliuga a cumplirla como c#
-    """Relaciona cada botón con la función que debe ejecutar."""
-
+    ventana.frame_capturado = None
     acciones = {
         "btnIniciarCamara": iniciar_camara,
         "btnDetenerCamara": detener_camara,
@@ -364,15 +456,21 @@ def conectar_logica(ventana: QMainWindow) -> None:#types hints o anotacions de t
 # ============================================================
 
 def main() -> int:
-    """Crea la aplicación, configura la ventana y la muestra."""
 
     aplicacion = QApplication(sys.argv)
 
     ventana = cargar_ventana()
+    ventana.procesador = None      # todavía no hay cámara corriendo
 
     conectar_pantallas(ventana)
     conectar_logica(ventana)
+    cargar_personas(ventana)
+    def cerrar_todo():
+        if ventana.procesador is not None:
+          ventana.procesador.detener()
+          ventana.procesador.wait()    # esperamos a que termine su limpieza
 
+    aplicacion.aboutToQuit.connect(cerrar_todo)
     ventana.show()
 
     return aplicacion.exec()

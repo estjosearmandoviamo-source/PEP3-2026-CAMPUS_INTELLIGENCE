@@ -15,6 +15,8 @@ from CAMPUS_INTELLIGENCE.Base_Datos.Conexion_DB import conectar
 from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.detector import DetectorFacial
 from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.Comparar_Rostros import ComparadorRostros
 from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.Capturar_Rostro import CapturarRostro
+from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.registro_rostroBD import RostrosDB 
+
 
 
 class VisionCampusCore:
@@ -39,9 +41,12 @@ class VisionCampusCore:
         self.detector_facial = DetectorFacial()
         self.comparador_rostros = ComparadorRostros()
 
+        self.RegistroBD = RostrosDB()
+        self.comparador_rostros.cargar_desde_base( self.RegistroBD)
+
         self.capturador_rostros = CapturarRostro(
             self.detector_facial,
-            self.comparador_rostros
+            self.comparador_rostros,  self.RegistroBD
         )
 
         # BASE DE DATOS
@@ -72,6 +77,9 @@ class VisionCampusCore:
 
         # ÚLTIMA IMAGEN RECIBIDA
         self.ultimo_frame = None
+
+        # RECONOCIMIENTO FACIAL SOBRE EL VIDEO
+        self.reconocimiento_activo = True
 
     # ============================================================
     # 2. REGISTRAR EVENTOS
@@ -230,31 +238,12 @@ class VisionCampusCore:
 
         self.aula1.ACTUALIZAR_DATOS(cantidad_personas)
 
-        # Mostrar información del aula.
-        cv2.putText(
-            frame_resultados,
-            f"PERSONAS: {self.aula1.personas}",
-            (20, 20),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            (0, 255, 0),
-            1
-        )
-
-        cv2.putText(
-            frame_resultados,
-            f"OCUPACION: {self.aula1.ocupacion:.1f}%",
-            (20, 40),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            1,
-            (0, 255, 0),
-            1
-        )
+        
 
         cv2.putText(
             frame_resultados,
             f"ESTADO: {self.aula1.estado}",
-            (20, 65),
+            (20, 35),
             cv2.FONT_HERSHEY_SIMPLEX,
             1,
             (0, 255, 0),
@@ -423,11 +412,6 @@ class VisionCampusCore:
                         embedding
                     )
 
-                    print(
-                        f"COMPARANDO con {id_guardado} | "
-                        f"similitud: {similitud:.2f} | "
-                        f"umbral: {self.reid.Umbral}"
-                    )
 
                     if similitud > mejor_similitud:
 
@@ -775,35 +759,70 @@ class VisionCampusCore:
 
             self.inicio_conteo = time.time()
 
+       
         # ========================================================
-        # DEVOLVER IMAGEN Y ESTADÍSTICAS A LA INTERFAZ
-        # ========================================================
+# RECONOCIMIENTO FACIAL
+# ========================================================
 
+        personas_reconocidas = 0
+
+        if self.reconocimiento_activo:
+
+           rostros = self.detector_facial.detectar(frame)          # buscar caras
+
+           for rostro in rostros:
+
+            nombre, similitud = self.comparador_rostros.comparar(rostro.embedding)
+
+            if nombre is None:
+               nombre = "no conocido"
+            else:
+               personas_reconocidas += 1                       # contamos a los reconocidos
+
+            izq, arriba, der, abajo = rostro.bbox               # esquinas del cuadro
+
+            cv2.rectangle(
+            frame_resultados,
+            (int(izq), int(arriba)),
+            (int(der), int(abajo)),
+            (255, 0, 0),
+            2
+        )
+
+            cv2.putText(
+            frame_resultados,
+            f"{nombre} {similitud:.2f}",
+            (int(izq), int(arriba) - 10),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.6,
+            (0, 255, 0),
+            1
+        )
+         # ========================================================
+                # DEVOLVER IMAGEN Y ESTADÍSTICAS A LA INTERFAZ
+                # ========================================================
+        
         estadisticas = {
-            "personas": self.aula1.personas,
-            "ocupacion": self.aula1.ocupacion,
-            "estado": self.aula1.estado
-        }
-
+                    "personas": self.aula1.personas,
+                    "ocupacion": self.aula1.ocupacion,
+                    "estado": self.aula1.estado,"reconocidas": personas_reconocidas
+                }
+        
         return frame_resultados, estadisticas
 
     # ============================================================
     # 6. REGISTRO FACIAL: ANTES SE ACTIVABA CON LA TECLA R
     # ============================================================
 
+    
     def registrar_rostro(self, nombre):
-
         if self.ultimo_frame is None:
+           return False, "No hay una imagen disponible para registrar."
 
-            print("No hay una imagen disponible para registrar.")
-
-            return
-
-        self.capturador_rostros.registrar_rostro(
-            nombre,
-            self.ultimo_frame.copy()
-        )
-
+        return self.capturador_rostros.registrar_Rostro(
+        nombre,
+        self.ultimo_frame.copy()
+    )
     # ============================================================
     # 7. CERRAR CONEXIÓN CON POSTGRESQL
     # ============================================================

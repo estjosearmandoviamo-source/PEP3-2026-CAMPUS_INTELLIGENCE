@@ -122,6 +122,14 @@ QPushButton#btnDetenerCamara:hover { background: #542333; border-color: #ec657d;
 QPushButton#btnCancelarRegistro, QPushButton#btnRestablecerConfiguracion {
     background: #12253a; border: 1px solid #537392; text-align: center;
 }
+QPushButton#botonAccion {
+    min-width: 40px;
+    max-width: 40px;
+    min-height: 30px;
+    max-height: 30px;
+    padding: 0px;
+    text-align: center;
+}
 
 QLineEdit, QComboBox, QSpinBox {
     min-height: 24px;
@@ -147,7 +155,7 @@ QSlider::handle:horizontal {
     background: #f4fcff; border: 2px solid #1dc9ff;
 }
 
-QTableWidget {
+QTableWidget {outline:0;
     color: #eaf4ff; background: #0c1b2d; alternate-background-color: #10243a;
     border: 1px solid #274b69; gridline-color: #1d3852;
     selection-background-color: #075da5; border-radius: 10px;
@@ -156,6 +164,10 @@ QTableWidget::item { padding: 10px; border-bottom: 1px solid #1c3852; }
 QHeaderView::section {
     color: #c9eeff; background: #142c44; padding: 10px 8px;
     border: 0; border-bottom: 1px solid #25a9d8; font-weight: 700;
+}
+QTableWidget::item:selected {
+    background: #075da5;
+    color: #ffffff;
 }
 QScrollBar:vertical { background: #0b1a2b; width: 10px; margin: 2px; }
 QScrollBar::handle:vertical { background: #31536f; min-height: 24px; border-radius: 5px; }

@@ -12,6 +12,7 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
     estadisticas = Signal(object)
 
     error = Signal(str)
+    registro_terminado = Signal(bool, str)
 
     def __init__(self):
         super().__init__()#en python se inicialia asi la clase padre que en C# es BASE
@@ -19,6 +20,7 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
         self.ejecutando = False
         self.camara = None
         self.core = None
+        self.registro_pendiente = None
 
     def run(self):
         self.ejecutando = True
@@ -47,7 +49,16 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
                 #coonnect registramos que funcion se ejecur=tara cuando lllegue un abviso y entreagle la informacion recibida
                 self.nueva_imagen.emit(frame_procesado)##tocamos el timbre y enviames el mensaje
                 self.estadisticas.emit(datos)
+                if self.registro_pendiente is not None:
+                    nombre = self.registro_pendiente
+                    self.registro_pendiente = None#ya no hay uno
 
+                   
+                    
+
+                    exito, mensaje = self.core.registrar_rostro(nombre)
+                    self.registro_terminado.emit(exito, mensaje)
+  
         except Exception as e:
             self.error.emit(f"Error en VisionCampus: {e}")
 

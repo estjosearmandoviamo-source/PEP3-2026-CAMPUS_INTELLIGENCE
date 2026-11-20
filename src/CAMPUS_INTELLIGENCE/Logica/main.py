@@ -597,6 +597,7 @@ while True:
             
 # EMPEZAR A DIBUJAR RECONOCIMIENTOP
 
+
     if tecla == ord("c") or tecla == ord("C"):
         empezar_dibujo_reconocimiento = not empezar_dibujo_reconocimiento
 
