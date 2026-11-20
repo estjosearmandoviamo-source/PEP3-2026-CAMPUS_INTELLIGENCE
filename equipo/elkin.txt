@@ -1,0 +1,18 @@
+Nombre: Elkin
+Grupo: VISION CAMPUS (Campus Intelligence)
+Rol: Dashboard de estadísticas y parte matemática
+
+Responsabilidad principal: convertir los datos en estadística visible.
+- Dashboard web en Streamlit (carpeta dashboard/ del repositorio):
+  filtros de aula y fechas, tarjetas de ocupación, gráfico de ocupación en el
+  tiempo, barras por hora con horas pico y resumen estadístico
+  (media, desviación estándar, máximo y mínimo).
+- Lo desarrolla con un aula simulada (AULA-SIM); los datos simulados van siempre
+  rotulados y no se mezclan con los reales.
+- Explicación de la parte matemática: dónde entra la estadística, cómo se
+  reconoce a una persona (embedding y similitud coseno) y qué significan las
+  tasas de error (falsos positivos y falsos negativos).
+
+En la defensa: explica la estadística y las matemáticas del proyecto.
+
+Se incorporó al equipo el 19/11/2026.

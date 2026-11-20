@@ -1,8 +1,13 @@
-Nombre: Jose
-Apellido: Via Montaño
-Grupo: CAMPUS INTELLIGENCE
-Rol o responsabilidad principal:
-Rol: Líder Técnico / Desarrollador Principal
-Responsable del desarrollo central del sistema: implementación del módulo de visión por computadora (detección y tracking con YOLO/OpenCV), 
-diseño e implementación de la base de datos en PostgreSQL, integración de ambos componentes, y coordinación general del proyecto (planificación de etapas y cronograma).
-También responsable de las pruebas técnicas y validación del funcionamiento del sistema.
+Nombre: José Armando
+Apellido: Vía Montaño
+Grupo: VISION CAMPUS (Campus Intelligence)
+Rol: Líder técnico / Desarrollador principal
+
+Responsabilidad principal: el código y el sistema.
+- Visión por computadora: detección y seguimiento de personas con YOLO11n y PersonReID.
+- Reconocimiento facial experimental con voluntarios (InsightFace).
+- Base de datos en PostgreSQL: eventos de entrada y salida, ocupación y rostros registrados.
+- Aplicación de escritorio en PySide6 (Monitoreo, Registro Facial, Personas y Configuración).
+- Integración de todos los módulos, pruebas técnicas y control de versiones en Git.
+
+En la defensa: explica el código y el funcionamiento técnico del sistema.
