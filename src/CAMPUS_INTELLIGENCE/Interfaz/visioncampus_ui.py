@@ -83,6 +83,9 @@ def conectar_pantallas(ventana: QMainWindow) -> None:
             return
 
         paginas.setCurrentIndex(indice)
+        # Los puntos del rostro solo se dibujan en Registro Facial (índice 1)
+        if ventana.procesador is not None and ventana.procesador.core is not None:
+            ventana.procesador.core.dibujar_puntos = (indice == 1)
 
         for posicion, nombre in enumerate(nombres_botones):
             boton = ventana.findChild(QPushButton, nombre)
@@ -222,7 +225,7 @@ def cargar_personas(ventana):
 
         if etiqueta_total is not None:
            etiqueta_total.setText(f"Total de personas: {len(registros)}")
-
+            
         for fila, registro in enumerate(registros):
 
             id_rostro, nombre, fecha, autorizado = registro
@@ -243,6 +246,11 @@ def cargar_personas(ventana):
             boton = QPushButton("⋮")
             boton.setObjectName("botonAccion")
             boton.setProperty("id_rostro", id_rostro)
+
+            
+
+            boton.clicked.connect(lambda estado=False, id =id_rostro, nombreeEli = nombre: 
+                                eliminar_persona(ventana, id, nombreeEli )   )
 
             contenedor = QWidget()
             disposicion = QHBoxLayout(contenedor)
@@ -265,6 +273,48 @@ def cargar_personas(ventana):
 
         if conexion is not None:
             conexion.close()
+def eliminar_persona(ventana: QMainWindow, id_rostro: int, nombre: str) -> None:
+
+    respuesta = QMessageBox.question(
+        ventana,
+        "Eliminar registro",
+        f"¿QUIEERES Eliminar el registro facial de {nombre.upper()}?"
+        
+    )
+
+    if respuesta != QMessageBox.StandardButton.Yes:
+        return
+
+    conexion = None
+    cursor = None
+
+    try:
+        conexion = conectar()
+        cursor = conexion.cursor()
+
+        cursor.execute(
+            "DELETE FROM rostros_registrados WHERE id_rostro = %s",
+            (id_rostro,)
+        )
+        conexion.commit()
+
+    except Exception as error:
+        if conexion is not None:
+            conexion.rollback()
+
+        QMessageBox.critical(ventana, "Error al eliminar", f"No se pudo eliminar:\n{error}")
+        return
+
+    finally:
+        if cursor is not None:
+            cursor.close()
+        if conexion is not None:
+            conexion.close()
+
+        # Si la cámara está encendida, avisamos al hilo para que saque a la persona de la memoria
+    if ventana.procesador is not None:
+        ventana.procesador.eliminar_pendiente = id_rostro
+    cargar_personas(ventana)  
 
 def iniciar_camara(ventana: QMainWindow) -> None:
     if ventana.procesador is not None:
@@ -311,6 +361,18 @@ def iniciar_camara(ventana: QMainWindow) -> None:
     def mostrar_resultado_registroDeRostro(exito, mensaje):
         if exito:
             QMessageBox.information(ventana, "Registro FACIALL", mensaje)
+            campo_nombre = ventana.findChild(QLineEdit, "campoNombre")
+            chek_permiso = ventana.findChild(QCheckBox , "checkConsentimiento")
+            estado = ventana.findChild(QLabel, "estadoCaptura")
+
+            #LIMPIAMOS
+            campo_nombre.clear()
+            chek_permiso.setChecked(False)
+            estado.setText("")
+            ventana.frame_capturado = None
+
+            cargar_personas(ventana)
+
 
         else:
             QMessageBox.warning(ventana, "Registro FACIALL", mensaje)
@@ -359,7 +421,12 @@ def capturar_rostro(ventana: QMainWindow) -> None:
         estado.setText("ENCUENDE LA CAMRA PRIMERO PORFAVOR")
         return
    core =ventana.procesador.core
-   ventana.frame_capturado = core.ultimo_frame.copy()
+   
+    # Todavía no llegó ningún fotograma
+   if core.ultimo_frame is None:
+        estado.setText("ESPERA UN MOMENTO, LA CÁMARA ESTÁ CARGANDO")
+        return
+   ventana.frame_capturado = core.ultimo_frame#PORQUE YA TIERNE UNA COPIA 
    estado.setText("CAPTURADA CORRECTAMNETE")
     
 
@@ -384,7 +451,7 @@ def guardar_registro(ventana: QMainWindow) -> None:
     if ventana.procesador is None:
                  QMessageBox.warning(ventana, "REGISTRO FACIAL ","PRIMERO DEBVES PRENDE RLA CAMARA ")
                  return
-    ventana.procesador.registro_pendiente = nombre
+    ventana.procesador.registro_pendiente = (nombre, ventana.frame_capturado)
 
 
 

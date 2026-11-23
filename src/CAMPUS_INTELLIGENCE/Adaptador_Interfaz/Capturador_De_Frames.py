@@ -21,6 +21,7 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
         self.camara = None
         self.core = None
         self.registro_pendiente = None
+        self.eliminar_pendiente = None   #sacra d ela memmperia
 
     def run(self):
         self.ejecutando = True
@@ -50,14 +51,21 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
                 self.nueva_imagen.emit(frame_procesado)##tocamos el timbre y enviames el mensaje
                 self.estadisticas.emit(datos)
                 if self.registro_pendiente is not None:
-                    nombre = self.registro_pendiente
+                    nombre, framecaptuarado = self.registro_pendiente
                     self.registro_pendiente = None#ya no hay uno
 
                    
                     
 
-                    exito, mensaje = self.core.registrar_rostro(nombre)
+                    exito, mensaje = self.core.registrar_rostro(nombre, framecaptuarado)
                     self.registro_terminado.emit(exito, mensaje)
+
+
+                if self.eliminar_pendiente is not None:
+                    id_rostro = self.eliminar_pendiente
+                    self.eliminar_pendiente = None    # ya no hay uno pendiente
+
+                    self.core.comparador_rostros.eliminar_rostro(id_rostro)
   
         except Exception as e:
             self.error.emit(f"Error en VisionCampus: {e}")

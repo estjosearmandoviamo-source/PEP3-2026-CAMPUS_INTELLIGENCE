@@ -14,10 +14,10 @@ class CapturarRostro:
             return False, "Se detectaron varios rostros. Registra una persona a la vez."
 
          embedding = rostros[0].embedding
-         guardado = self.Registro_rostro.guardar(nombre, embedding, True)
+         id_rostro = self.Registro_rostro.guardar(nombre, embedding, True)
 
-         if guardado:
-            self.comparador.agregar_rostro(nombre, embedding)
+         if id_rostro is not None:
+            self.comparador.agregar_rostro(id_rostro,nombre, embedding)#agregar a la memoeria 
             return True, f"Rostro de {nombre} registrado."
 
          return False, "No se pudo guardar el rostro."

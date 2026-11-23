@@ -16,7 +16,7 @@ from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.detector import DetectorFacial
 from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.Comparar_Rostros import ComparadorRostros
 from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.Capturar_Rostro import CapturarRostro
 from CAMPUS_INTELLIGENCE.Reconocimiento_Facial.registro_rostroBD import RostrosDB 
-
+from scipy.spatial import Delaunay
 
 
 class VisionCampusCore:
@@ -80,6 +80,8 @@ class VisionCampusCore:
 
         # RECONOCIMIENTO FACIAL SOBRE EL VIDEO
         self.reconocimiento_activo = True
+                # Interruptor para dibujar la malla y los puntos del rostro
+        self.dibujar_puntos = False
 
     # ============================================================
     # 2. REGISTRAR EVENTOS
@@ -206,6 +208,33 @@ class VisionCampusCore:
 
         return area_tapadaa / area_de_a
 
+
+    
+    def dibujar_malla_y_puntos(self, imagen, rostro):
+        puntos = rostro.landmark_2d_106      # 106 puntos (x, y)
+
+        # Malla de triángulos sobre una capa semitransparente
+        triangulos = Delaunay(puntos)
+        capa = imagen.copy()
+
+        for a, b, c in triangulos.simplices:
+            pa = (int(puntos[a][0]), int(puntos[a][1]))
+            pb = (int(puntos[b][0]), int(puntos[b][1]))
+            pc = (int(puntos[c][0]), int(puntos[c][1]))
+
+            cv2.line(capa, pa, pb, (0, 255, 255), 1)
+            cv2.line(capa, pb, pc, (0, 255, 255), 1)
+            cv2.line(capa, pc, pa, (0, 255, 255), 1)
+
+        cv2.addWeighted(capa, 0.4, imagen, 0.6, 0, imagen)
+
+        # 5 puntos clave (rojos)
+        for x, y in rostro.kps:
+            cv2.circle(imagen, (int(x), int(y)), 3, (0, 0, 255), -1)
+
+        # 106 puntos (verdes)
+        for x, y in puntos:
+            cv2.circle(imagen, (int(x), int(y)), 1, (0, 255, 0), -1)
     # ============================================================
     # 5. PROCESAR UN FOTOGRAMA
     # ============================================================
@@ -798,6 +827,8 @@ class VisionCampusCore:
             (0, 255, 0),
             1
         )
+            if self.dibujar_puntos:
+                self.dibujar_malla_y_puntos(frame_resultados, rostro)
          # ========================================================
                 # DEVOLVER IMAGEN Y ESTADÍSTICAS A LA INTERFAZ
                 # ========================================================
@@ -815,14 +846,12 @@ class VisionCampusCore:
     # ============================================================
 
     
-    def registrar_rostro(self, nombre):
+    def registrar_rostro(self, nombre, frame):
         if self.ultimo_frame is None:
            return False, "No hay una imagen disponible para registrar."
 
         return self.capturador_rostros.registrar_Rostro(
-        nombre,
-        self.ultimo_frame.copy()
-    )
+        nombre,frame    )
     # ============================================================
     # 7. CERRAR CONEXIÓN CON POSTGRESQL
     # ============================================================

@@ -3,24 +3,29 @@ import torch
 
 class ComparadorRostros:
     def __init__(self):
-        self.rostros_en_memoria = []
-    def agregar_rostro(self, nombre , embedding ):
-        self.rostros_en_memoria.append({
+        self.rostros_en_memoria = {}
+    def agregar_rostro(self, id_rostro, nombre , embedding ):
+        self.rostros_en_memoria[id_rostro] = {
             "nombre": nombre,
             "embedding": embedding
 
-        })
+        }
+
+    def eliminar_rostro(self, id_rostro):
+        self.rostros_en_memoria.pop(id_rostro, None)  
+        #pop devuelve lo que borra y del no. 
+
     def cargar_desde_base(self, rostros_db):
-            filas = rostros_db.mostrar_Registro()        # leemos la tabla
-            for nombre, huella in filas:                       
+            filas = rostros_db.mostrar_Registro()       
+            for id_rostro, nombre, huella in filas:                       
                embedding = np.array(huella, dtype=np.float32)   # lista -> arreglo
-               self.agregar_rostro(nombre, embedding)           # a la lista en memoria
+               self.agregar_rostro(id_rostro, nombre, embedding)           # a la lista en memoria
             print(f"Rostros cargados desde la base: {len(filas)}")
     def comparar(self, embedding_nuevo):
 
         mejor_similitud = 0 
         mejor_nombre = None
-        for rostro in self.rostros_en_memoria:
+        for rostro in self.rostros_en_memoria.values():
             embedding_registardo  = rostro["embedding"]
             nombre_persona = rostro["nombre"]
             similitud = torch.nn.functional.cosine_similarity(
