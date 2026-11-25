@@ -17,7 +17,7 @@ class CapturarRostro:
          id_rostro = self.Registro_rostro.guardar(nombre, embedding, True)
 
          if id_rostro is not None:
-            self.comparador.agregar_rostro(id_rostro,nombre, embedding)#agregar a la memoeria 
+            self.comparador.agregar_rostro(id_rostro,nombre, embedding, True)#agregar a la memoeria 
             return True, f"Rostro de {nombre} registrado."
 
          return False, "No se pudo guardar el rostro."

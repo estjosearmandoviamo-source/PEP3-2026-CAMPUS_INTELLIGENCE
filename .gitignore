@@ -7,3 +7,5 @@ __pycache__/
 .venv_campus/
 opencode.json
 local.txt
+# Entorno virtual del dashboard
+.venv/

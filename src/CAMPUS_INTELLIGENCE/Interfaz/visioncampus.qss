@@ -1,174 +1,364 @@
 /*
-   TEMA FUTURISTA PROFESIONAL
-   Fondo: azul noche | Acento: cian | Acción positiva: verde menta
-   Puedes cambiar los colores sin tocar el archivo Python.
+   VISIONCAMPUS - TEMA OSCURO PROFESIONAL (v0.98)
+   Ideas de diseño:
+   - Un solo color de acento (cian) para navegación y elementos activos.
+   - Verde solo para "bien / guardar", rojo solo para "detener / peligro".
+   - Superficies en 3 niveles: fondo < tarjeta < campo.
+   - Todos los bordes redondeados iguales (12 px en tarjetas, 8 px en controles).
+   Los colores se cambian aquí; el código Python no se toca.
 */
+
+/* ---------- BASE ---------- */
 QMainWindow, QWidget#centralwidget {
-    background: #07111f;
-    color: #e9f4ff;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+        stop:0 #050b17, stop:0.5 #081426, stop:1 #04101c);
+    color: #e6eef8;
     font-family: "Segoe UI";
     font-size: 10pt;
 }
+QToolTip {
+    background: #14243a; color: #e6eef8;
+    border: 1px solid #2a4663; padding: 4px 8px;
+}
 
+/* ---------- BARRA LATERAL ---------- */
 QFrame#menu {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-        stop:0 #10243b, stop:0.52 #0c1a2d, stop:1 #0a1626);
-    border-right: 1px solid #1d3b58;
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #0b1d36, stop:0.6 #08152a, stop:1 #060f20);
+    border-right: 1px solid rgba(43, 196, 255, 70);
 }
-QLabel#logoIcon { color: #39d9ff; }
-QLabel#marca { color: #f5fbff; font-size: 19pt; font-weight: 750; }
-QLabel#subtituloMarca { color: #8aa7c5; font-size: 9pt; }
+QLabel#logoIcon { font-size: 30pt; }
+QLabel#marca { color: #f4f9ff; font-size: 18pt; font-weight: 700; }
+QLabel#subtituloMarca { color: #7f98b5; font-size: 9pt; }
 
-QFrame#vistaCamara, QFrame#vistaRegistro {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-        stop:0 #07111e, stop:0.55 #0a1727, stop:1 #081321);
-    border: 1px solid #28617e;
-    border-radius: 15px;
-}
-QFrame#panelControlCamara, QFrame#tarjetaDetectadas, QFrame#tarjetaReconocidas,
-QFrame#tarjetaOcupacion, QFrame#panelDatosRegistro, QFrame#tarjetaConfigCamara,
-QFrame#tarjetaConfigAula, QFrame#tarjetaConfigRostro, QFrame#tarjetaConfigBD {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-        stop:0 #142b43, stop:0.58 #10243a, stop:1 #0e2035);
-    border: 1px solid #274b69;
-    border-radius: 14px;
-}
-QFrame#tarjetaDetectadas { border-top: 3px solid #27c9ff; }
-QFrame#tarjetaReconocidas { border-top: 3px solid #35e7a1; }
-QFrame#tarjetaOcupacion { border-top: 3px solid #648cff; }
-
-QLabel#tituloMonitoreo, QLabel#tituloRegistro, QLabel#tituloPersonas,
-QLabel#tituloConfiguracion {
-    color: #f5fbff; font-size: 22pt; font-weight: 750;
-}
-QLabel#ayudaMonitoreo, QLabel#ayudaRegistro, QLabel#ayudaPersonas,
-QLabel#ayudaConfiguracion, QLabel#textoModelos, QLabel#textoFps,
-QLabel#etiquetaDetectadas, QLabel#etiquetaReconocidas, QLabel#etiquetaOcupacion,
-QLabel#ayudaConfigCamara, QLabel#ayudaConfigAula, QLabel#ayudaConfigRostro,
-QLabel#ayudaConfigBD, QLabel#notaUmbral, QLabel#ayudaTablaPersonas,
-QLabel#textoRostroVacio, QLabel#textoVistaVacia {
-    color: #9bb5cf;
-}
-QLabel#tituloControlCamara, QLabel#tituloDatosRegistro, QLabel#tituloConfigCamara,
-QLabel#tituloConfigAula, QLabel#tituloConfigRostro, QLabel#tituloConfigBD,
-QLabel#totalPersonas {
-    color: #eaf7ff; font-size: 12pt; font-weight: 700;
-}
-QLabel#valorDetectadas, QLabel#valorReconocidas, QLabel#valorOcupacion {
-    font-size: 27pt; font-weight: 750;
-}
-QLabel#valorDetectadas { color: #55d7ff; }
-QLabel#valorReconocidas { color: #53edac; }
-QLabel#valorOcupacion { color: #93aaff; }
-QLabel#estadoSistema { color: #5df0b4; background: #0e302e; }
-
-QPushButton {
-    min-height: 26px;
-    padding: 11px 14px;
-    color: #dcecff;
-    background: #13263d;
-    border: 1px solid #294765;
-    border-radius: 9px;
-    text-align: left;
-    font-size: 10pt;
-}
-QPushButton:hover {
-    background: #1a3854;
-    border-color: #38bde8;
-    color: #ffffff;
-}
-QPushButton:pressed { background: #0c4b70; }
-QPushButton:disabled { color: #60758d; background: #101c2a; border-color: #1d3044; }
+/* Botones de navegación: transparentes, con barra de acento a la izquierda al estar activos */
 QPushButton#btnMonitoreo, QPushButton#btnRegistroFacial,
 QPushButton#btnPersonas, QPushButton#btnConfiguracion {
-    min-height: 32px;
+    min-height: 30px;
+    padding: 10px 16px;
     background: transparent;
-    border: 1px solid transparent;
+    border: none;
+    border-left: 3px solid transparent;
+    border-radius: 8px;
+    color: #9db3cc;
     font-size: 11pt;
+    text-align: left;
 }
 QPushButton#btnMonitoreo:hover, QPushButton#btnRegistroFacial:hover,
 QPushButton#btnPersonas:hover, QPushButton#btnConfiguracion:hover {
-    background: #132d46; border-color: #234b69;
+    background: rgba(43, 196, 255, 28);
+    color: #ffffff;
 }
 QPushButton#btnMonitoreo:checked, QPushButton#btnRegistroFacial:checked,
 QPushButton#btnPersonas:checked, QPushButton#btnConfiguracion:checked {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #087fda, stop:1 #0752a8);
-    border: 1px solid #21c6ff;
-    color: white; font-weight: 700;
+        stop:0 rgba(43, 196, 255, 90), stop:1 rgba(43, 196, 255, 8));
+    border-left: 3px solid #35d3ff;
+    color: #ffffff;
+    font-weight: 700;
 }
-QPushButton#btnIniciarCamara, QPushButton#btnGuardarRegistro,
-QPushButton#btnGuardarConfiguracion {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #16d98a, stop:1 #079a67);
-    border: 1px solid #36efae;
-    color: #f5fffb; font-weight: 750; text-align: center;
+
+/* Estado del sistema (abajo de la barra) */
+QLabel#estadoSistema {
+    color: #4be3a4; background: #0f2a2a;
+    border: 1px solid #1b6a57; border-radius: 8px; padding: 9px;
 }
-QPushButton#btnIniciarCamara:hover, QPushButton#btnGuardarRegistro:hover,
-QPushButton#btnGuardarConfiguracion:hover { background: #1bea9a; color: #06251b; }
-QPushButton#btnCapturarRostro, QPushButton#btnIrEstadisticas {
-    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #08a9f2, stop:1 #0864de);
-    border: 1px solid #38caff;
-    color: white; font-weight: 750; text-align: center;
+
+/* ---------- TÍTULOS ---------- */
+QLabel#tituloMonitoreo, QLabel#tituloRegistro, QLabel#tituloPersonas,
+QLabel#tituloConfiguracion {
+    color: #f4f9ff; font-size: 20pt; font-weight: 700;
 }
-QPushButton#btnCapturarRostro:hover, QPushButton#btnIrEstadisticas:hover {
-    background: #19bbff; color: #061b2a;
+QLabel#ayudaMonitoreo, QLabel#ayudaRegistro, QLabel#ayudaPersonas,
+QLabel#ayudaConfiguracion {
+    color: #8aa3bf; font-size: 10pt;
 }
-QPushButton#btnDetenerCamara {
-    background: #321d2b; border: 1px solid #79384a; color: #ffc5cf; text-align: center;
+
+/* ---------- TARJETAS Y PANELES ---------- */
+QFrame#vistaCamara, QFrame#vistaRegistro {
+    background: #03080f;
+    border: 1px solid rgba(43, 196, 255, 130);
+    border-radius: 14px;
 }
-QPushButton#btnDetenerCamara:hover { background: #542333; border-color: #ec657d; }
-QPushButton#btnCancelarRegistro, QPushButton#btnRestablecerConfiguracion {
-    background: #12253a; border: 1px solid #537392; text-align: center;
+QFrame#panelControlCamara, QFrame#tarjetaDetectadas, QFrame#tarjetaReconocidas,
+QFrame#tarjetaOcupacion, QFrame#panelDatosRegistro, QFrame#tarjetaConfigCamara,
+QFrame#tarjetaConfigAula, QFrame#tarjetaConfigRostro, QFrame#tarjetaConfigBD,
+QFrame#tarjetaDesconocidos, QFrame#tarjetaNoAutorizadas {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+        stop:0 rgba(30, 64, 104, 190), stop:1 rgba(12, 28, 50, 215));
+    border: 1px solid rgba(43, 196, 255, 70);
+    border-radius: 14px;
 }
-QPushButton#botonAccion {
-    min-width: 40px;
-    max-width: 40px;
-    min-height: 30px;
-    max-height: 30px;
-    padding: 0px;
+/* Franja de color arriba de cada tarjeta de estadística */
+QFrame#tarjetaDetectadas  { border-top: 3px solid #2bc4ff; }
+QFrame#tarjetaReconocidas { border-top: 3px solid #3ee8a5; }
+QFrame#tarjetaOcupacion   { border-top: 3px solid #7a9bff; }
+
+/* Títulos de tarjeta */
+QLabel#tituloControlCamara, QLabel#tituloDatosRegistro, QLabel#tituloConfigCamara,
+QLabel#tituloConfigAula, QLabel#tituloConfigRostro, QLabel#tituloConfigBD {
+    color: #eaf5ff; font-size: 12pt; font-weight: 700;
+    background: transparent; border: none;
+}
+/* Textos secundarios */
+QLabel#textoModelos, QLabel#textoFps, QLabel#ayudaAnonimo,
+QLabel#ayudaConfigCamara, QLabel#ayudaConfigAula, QLabel#ayudaConfigRostro,
+QLabel#ayudaConfigBD, QLabel#notaUmbral, QLabel#ayudaTablaPersonas,
+QLabel#textoRostroVacio, QLabel#textoVistaVacia, QLabel#etiquetaNombre,
+QLabel#etiquetaAula, QLabel#etiquetaCapacidad {
+    color: #8aa3bf; background: transparent; border: none;
+}
+QLabel#etiquetaDetectadas, QLabel#etiquetaReconocidas, QLabel#etiquetaOcupacion {
+    color: #9db3cc; font-size: 10pt; background: transparent; border: none;
+}
+QLabel#valorDetectadas, QLabel#valorReconocidas, QLabel#valorOcupacion {
+    font-size: 28pt; font-weight: 700; background: transparent; border: none;
+}
+QLabel#valorDetectadas  { color: #52d6ff; }
+QLabel#valorReconocidas { color: #55eeae; }
+QLabel#valorOcupacion   { color: #9ab1ff; }
+
+/* ---------- ESTADOS ---------- */
+/* La etiqueta EN VIVO está gris cuando la cámara está apagada.
+   El código Python le pone la propiedad activa=true cuando llega video. */
+QLabel#etiquetaEnVivo {
+    color: #8aa3bf; background: #152338;
+    border: 1px solid #25405c; border-radius: 8px;
+    padding: 7px 14px; font-weight: 700;
+}
+QLabel#etiquetaEnVivo[activa="true"] {
+    color: #ff6b76; background: #3a1c29; border: 1px solid #7a3345;
+}
+QLabel#estadoCamara {
+    color: #cfe3f7; background: transparent; padding: 2px;
+}
+/* Estado de la captura: el color lo decide poner_estado_captura (propiedad "estado") */
+QLabel#estadoCaptura {
+    color: #9db3cc; background: rgba(138, 163, 191, 22);
+    border: 1px solid rgba(138, 163, 191, 70); border-radius: 8px; padding: 8px 10px;
+}
+QLabel#estadoCaptura[estado="ok"] {
+    color: #55eeae; background: rgba(62, 232, 165, 28); border: 1px solid rgba(62, 232, 165, 140);
+}
+QLabel#estadoCaptura[estado="aviso"] {
+    color: #ffb366; background: rgba(255, 169, 77, 28); border: 1px solid rgba(255, 169, 77, 140);
+}
+QLabel#totalPersonas {
+    color: #eaf5ff; font-size: 12pt; font-weight: 700;
+    background: #0f2b32; border: 1px solid #1d7a61;
+    border-radius: 10px; padding: 9px 16px;
+}
+QLabel#valorUmbral { color: #4be3a4; font-weight: 700; padding: 6px; }
+QLabel#estadoBaseDatos {
+    color: #f0c46c; background: #2c2818;
+    border: 1px solid #6f5a2c; border-radius: 8px; padding: 11px;
+}
+
+/* ---------- BOTONES ---------- */
+QPushButton {
+    min-height: 24px;
+    padding: 10px 14px;
+    color: #dbe9f7;
+    background: rgba(21, 39, 62, 220);
+    border: 1px solid rgba(43, 196, 255, 80);
+    border-radius: 10px;
+    font-size: 10pt;
     text-align: center;
 }
+QPushButton:hover { background: #1c3452; border-color: #2bc4ff; color: #ffffff; }
+QPushButton:pressed { background: #0f2a45; }
+QPushButton:disabled { color: #5b7088; background: #101b2a; border-color: #1c2f45; }
 
-QLineEdit, QComboBox, QSpinBox {
-    min-height: 24px;
-    padding: 9px 11px;
-    color: #f0f8ff;
-    background: #0d1d30;
-    border: 1px solid #365c7c;
-    border-radius: 8px;
-    selection-background-color: #087fda;
+/* Acción positiva (verde) */
+QPushButton#btnIniciarCamara, QPushButton#btnGuardarRegistro,
+QPushButton#btnGuardarConfiguracion {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #17d68c, stop:1 #0aa872);
+    border: 1px solid #5dffc0;
+    color: #032016; font-weight: 700;
 }
-QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border: 2px solid #22caff; }
+QPushButton#btnIniciarCamara:hover, QPushButton#btnGuardarRegistro:hover,
+QPushButton#btnGuardarConfiguracion:hover { background: #1ad38d; }
+QPushButton#btnIniciarCamara:pressed, QPushButton#btnGuardarRegistro:pressed,
+QPushButton#btnGuardarConfiguracion:pressed { background: #0e9a67; }
+
+/* Acción principal (azul) */
+QPushButton#btnCapturarRostro, QPushButton#btnIrEstadisticas {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #0fa6f5, stop:1 #0a63e0);
+    border: 1px solid #6fd0ff;
+    color: #ffffff; font-weight: 700;
+}
+QPushButton#btnCapturarRostro:hover, QPushButton#btnIrEstadisticas:hover { background: #22b4ff; }
+QPushButton#btnCapturarRostro:pressed, QPushButton#btnIrEstadisticas:pressed { background: #0870bd; }
+
+/* Peligro / detener (rojo suave) */
+QPushButton#btnDetenerCamara {
+    background: #2f1a27; border: 1px solid #7a3345; color: #ffc2cb;
+}
+QPushButton#btnDetenerCamara:hover { background: #4a2233; border-color: #ef6a82; color: #ffffff; }
+
+/* Secundarios */
+QPushButton#btnCancelarRegistro, QPushButton#btnRestablecerConfiguracion {
+    background: transparent; border: 1px solid #3c5a78; color: #c5d6e8;
+}
+QPushButton#btnCancelarRegistro:hover, QPushButton#btnRestablecerConfiguracion:hover {
+    background: #15273e; border-color: #5c84a8; color: #ffffff;
+}
+
+/* Botón de acción de la tabla de personas (basurero) */
+QPushButton#botonAccion {
+    min-width: 40px; max-width: 40px;
+    min-height: 30px; max-height: 30px;
+    padding: 0px; font-size: 12pt; font-weight: 700;
+}
+QPushButton#botonAccion:hover { background: #4a2233; border-color: #ef6a82; }
+
+/* Botón de autorización (candado / escudo) junto al basurero */
+QPushButton#botonAutorizar {
+    min-width: 40px; max-width: 40px;
+    min-height: 30px; max-height: 30px;
+    padding: 0px; margin-right: 6px;
+}
+QPushButton#botonAutorizar:hover { background: #12382f; border-color: #3ee8a5; }
+
+/* ---------- CAMPOS ---------- */
+QLineEdit, QComboBox, QSpinBox {
+    min-height: 22px;
+    padding: 9px 12px;
+    color: #f0f7ff;
+    background: rgba(4, 12, 24, 230);
+    border: 1px solid rgba(43, 196, 255, 70);
+    border-radius: 9px;
+    selection-background-color: #0b86e0;
+}
+QLineEdit:hover, QComboBox:hover, QSpinBox:hover { border-color: #3d6488; }
+QLineEdit:focus, QComboBox:focus, QSpinBox:focus { border: 2px solid #35d3ff; }
+QLineEdit#campoBuscarPersona { border-radius: 10px; }
 QComboBox::drop-down { border: 0; width: 28px; }
 QComboBox QAbstractItemView {
-    background: #10243a; color: #e9f4ff;
-    selection-background-color: #087fda; border: 1px solid #28617e;
-}
-QCheckBox { spacing: 9px; color: #dcecff; }
-QCheckBox::indicator { width: 18px; height: 18px; }
-QSlider::groove:horizontal { height: 8px; background: #263f58; border-radius: 4px; }
-QSlider::sub-page:horizontal { background: #21e3a0; border-radius: 4px; }
-QSlider::handle:horizontal {
-    width: 19px; margin: -6px 0; border-radius: 9px;
-    background: #f4fcff; border: 2px solid #1dc9ff;
+    background: #111f33; color: #e6eef8;
+    selection-background-color: #0b86e0; border: 1px solid #2a4663;
 }
 
-QTableWidget {outline:0;
-    color: #eaf4ff; background: #0c1b2d; alternate-background-color: #10243a;
-    border: 1px solid #274b69; gridline-color: #1d3852;
-    selection-background-color: #075da5; border-radius: 10px;
+/* Casillas */
+QCheckBox { spacing: 10px; color: #dbe9f7; }
+QCheckBox::indicator {
+    width: 18px; height: 18px;
+    border: 1px solid #3c5a78; border-radius: 5px; background: #0b1626;
 }
-QTableWidget::item { padding: 10px; border-bottom: 1px solid #1c3852; }
+QCheckBox::indicator:hover { border-color: #2bc4ff; }
+QCheckBox::indicator:checked { background: #12b87a; border: 1px solid #2ee59c; }
+
+/* Deslizador */
+QSlider::groove:horizontal { height: 6px; background: #243d57; border-radius: 3px; }
+QSlider::sub-page:horizontal { background: #2bc4ff; border-radius: 3px; }
+QSlider::handle:horizontal {
+    width: 18px; margin: -6px 0; border-radius: 9px;
+    background: #f4fcff; border: 2px solid #2bc4ff;
+}
+
+/* ---------- TABLA ---------- */
+QTableWidget {
+    outline: 0;
+    color: #e6f0fb; background: #0d1a2c;
+    alternate-background-color: #111f33;
+    border: 1px solid #1f3a56; gridline-color: #1a3049;
+    selection-background-color: #11304f;
+    border-radius: 10px;
+}
+QTableWidget::item { padding: 10px; border-bottom: 1px solid #172b43; }
+QTableWidget::item:selected { background: #11304f; color: #ffffff; }
 QHeaderView::section {
-    color: #c9eeff; background: #142c44; padding: 10px 8px;
-    border: 0; border-bottom: 1px solid #25a9d8; font-weight: 700;
+    color: #bfeaff; padding: 12px 8px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(43, 196, 255, 60), stop:1 rgba(43, 196, 255, 14));
+    border: 0; border-bottom: 2px solid #2bc4ff; font-weight: 700;
 }
-QTableWidget::item:selected {
-    background: #075da5;
-    color: #ffffff;
+
+/* ---------- BARRAS DE DESPLAZAMIENTO ---------- */
+QScrollBar:vertical { background: transparent; width: 10px; margin: 2px; }
+QScrollBar::handle:vertical { background: #2f4f6c; min-height: 24px; border-radius: 5px; }
+QScrollBar::handle:vertical:hover { background: #2bc4ff; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QScrollBar:horizontal { background: transparent; height: 10px; margin: 2px; }
+QScrollBar::handle:horizontal { background: #2f4f6c; min-width: 24px; border-radius: 5px; }
+QScrollBar::handle:horizontal:hover { background: #2bc4ff; }
+QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal { width: 0; }
+
+/* ---------- FONDO TECNOLÓGICO (v0.98) ----------
+   {RECURSOS} lo reemplaza el código Python por la ruta de la carpeta recursos. */
+QStackedWidget#paginas {
+    border-image: url({RECURSOS}/fondo.png) 0 0 0 0 stretch stretch;
+    border: none;
 }
-QScrollBar:vertical { background: #0b1a2b; width: 10px; margin: 2px; }
-QScrollBar::handle:vertical { background: #31536f; min-height: 24px; border-radius: 5px; }
-QScrollBar::handle:vertical:hover { background: #1aa9d7; }
+QLabel#logoIcon { background: transparent; padding: 4px; }
+
+/* Caja de consejos en Registro Facial */
+QLabel#consejosRegistro {
+    color: #a9c4dd;
+    background: rgba(43, 196, 255, 18);
+    border: 1px dashed rgba(43, 196, 255, 90);
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+/* ---------- MONITOREO EN VIVO (v0.99) ---------- */
+QFrame#tarjetaDesconocidos { border-top: 3px solid #ffa94d; }
+QLabel#etiquetaDesconocidos { color: #9db3cc; font-size: 10pt; background: transparent; border: none; }
+QLabel#valorDesconocidos { color: #ffb366; font-size: 28pt; font-weight: 700; background: transparent; border: none; }
+
+QLabel#relojMonitoreo {
+    color: #9fdcff; background: rgba(43, 196, 255, 18);
+    border: 1px solid rgba(43, 196, 255, 70); border-radius: 8px;
+    padding: 7px 12px; font-family: "Consolas"; font-size: 10pt;
+}
+QLabel#estadoOcupacion { color: #9db3cc; font-size: 9pt; background: transparent; border: none; }
+
+/* Barra de ocupación: el código le pone nivel = bajo / medio / alto */
+QProgressBar#barraOcupacion {
+    max-height: 8px; min-height: 8px;
+    background: rgba(255, 255, 255, 20); border: none; border-radius: 4px;
+}
+QProgressBar#barraOcupacion::chunk { border-radius: 4px; background: #3ee8a5; }
+QProgressBar#barraOcupacion[nivel="medio"]::chunk { background: #f0c46c; }
+QProgressBar#barraOcupacion[nivel="alto"]::chunk { background: #ff5d6c; }
+
+QLabel#tituloActividad {
+    color: #eaf5ff; font-size: 11pt; font-weight: 700;
+    background: transparent; border: none; padding-top: 6px;
+}
+QListWidget#listaActividad {
+    background: rgba(3, 8, 15, 170);
+    border: 1px solid rgba(43, 196, 255, 60); border-radius: 10px;
+    padding: 6px; font-family: "Consolas"; font-size: 9pt;
+}
+QListWidget#listaActividad::item { padding: 5px 4px; border-bottom: 1px solid rgba(43, 196, 255, 22); }
+
+/* ---------- PERSONAS: TARJETAS DE RESUMEN (v1.0) ---------- */
+QFrame#tarjetaPersonasAutorizadas, QFrame#tarjetaPersonasNoAutorizadas, QFrame#tarjetaPersonasUltima {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+        stop:0 rgba(30, 64, 104, 190), stop:1 rgba(12, 28, 50, 215));
+    border: 1px solid rgba(43, 196, 255, 70);
+    border-radius: 14px;
+}
+QFrame#tarjetaPersonasAutorizadas   { border-top: 3px solid #3ee8a5; }
+QFrame#tarjetaPersonasNoAutorizadas { border-top: 3px solid #ff6b76; }
+QFrame#tarjetaPersonasUltima        { border-top: 3px solid #7a9bff; }
+QLabel#etiquetaPersonasAutorizadas, QLabel#etiquetaPersonasNoAutorizadas, QLabel#etiquetaPersonasUltima {
+    color: #9db3cc; font-size: 10pt; background: transparent; border: none;
+}
+QLabel#valorPersonasAutorizadas, QLabel#valorPersonasNoAutorizadas, QLabel#valorPersonasUltima {
+    font-size: 22pt; font-weight: 700; background: transparent; border: none;
+}
+QLabel#valorPersonasAutorizadas   { color: #55eeae; }
+QLabel#valorPersonasNoAutorizadas { color: #ff8a94; }
+QLabel#valorPersonasUltima        { color: #9ab1ff; font-size: 15pt; }
+
+/* Tarjeta No autorizadas (rojo) */
+QFrame#tarjetaNoAutorizadas { border-top: 3px solid #ff4d5e; }
+QLabel#etiquetaNoAutorizadas { color: #9db3cc; font-size: 10pt; background: transparent; border: none; }
+QLabel#valorNoAutorizadas { color: #ff6b7a; font-size: 28pt; font-weight: 700; background: transparent; border: none; }
+
+/* Registro Facial: pasos numerados (van al final para ganarle al gris de textos secundarios) */
+QLabel#etiquetaNombre, QLabel#etiquetaPaso2, QLabel#etiquetaPaso3, QLabel#etiquetaPaso4 {
+    font-weight: 600; color: #8fd8ff; background: transparent; border: none;
+}

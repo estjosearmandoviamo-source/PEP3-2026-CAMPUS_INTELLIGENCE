@@ -46,7 +46,7 @@
               <enum>QFrame::StyledPanel</enum>
             </property>
             <layout class="QVBoxLayout" name="layoutMenu">
-              <property name="leftMargin">
+              <property name="spacing"><number>8</number></property><property name="leftMargin">
                 <number>18</number>
               </property>
               <property name="topMargin">
@@ -65,9 +65,6 @@
                   </property>
                   <property name="alignment">
                     <set>Qt::AlignCenter</set>
-                  </property>
-                  <property name="styleSheet">
-                    <string>font-size: 30pt;</string>
                   </property>
                 </widget>
               </item>
@@ -89,9 +86,6 @@
                   <property name="alignment">
                     <set>Qt::AlignCenter</set>
                   </property>
-                  <property name="styleSheet">
-                    <string>color:#a8bbd4;</string>
-                  </property>
                 </widget>
               </item>
               <item>
@@ -99,10 +93,10 @@
                   <property name="orientation">
                     <enum>Qt::Vertical</enum>
                   </property>
-                  <property name="sizeHint">
+                  <property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint">
                     <size>
                       <width>20</width>
-                      <height>28</height>
+                      <height>40</height>
                     </size>
                   </property>
                 </spacer>
@@ -110,7 +104,7 @@
               <item>
                 <widget class="QPushButton" name="btnMonitoreo">
                   <property name="text">
-                    <string>▣   Monitoreo</string>
+                    <string>Monitoreo</string>
                   </property>
                   <property name="checkable">
                     <bool>true</bool>
@@ -123,7 +117,7 @@
               <item>
                 <widget class="QPushButton" name="btnRegistroFacial">
                   <property name="text">
-                    <string>◎   Registro Facial</string>
+                    <string>Registro Facial</string>
                   </property>
                   <property name="checkable">
                     <bool>true</bool>
@@ -133,7 +127,7 @@
               <item>
                 <widget class="QPushButton" name="btnPersonas">
                   <property name="text">
-                    <string>♧   Personas</string>
+                    <string>Personas</string>
                   </property>
                   <property name="checkable">
                     <bool>true</bool>
@@ -143,7 +137,7 @@
               <item>
                 <widget class="QPushButton" name="btnConfiguracion">
                   <property name="text">
-                    <string>⚙   Configuración</string>
+                    <string>Configuración</string>
                   </property>
                   <property name="checkable">
                     <bool>true</bool>
@@ -170,9 +164,6 @@
                   </property>
                   <property name="alignment">
                     <set>Qt::AlignCenter</set>
-                  </property>
-                  <property name="styleSheet">
-                    <string>color:#18dc81; border:1px solid #187e62; border-radius:8px; padding:10px;</string>
                   </property>
                 </widget>
               </item>
@@ -208,7 +199,7 @@
                         <item>
                           <widget class="QLabel" name="tituloMonitoreo">
                             <property name="text">
-                              <string>▣  Monitoreo del Aula</string>
+                              <string>Monitoreo del Aula</string>
                             </property>
                           </widget>
                         </item>
@@ -234,13 +225,10 @@
                         </property>
                       </spacer>
                     </item>
-                    <item>
+                    <item alignment="Qt::AlignTop|Qt::AlignRight"><widget class="QLabel" name="relojMonitoreo"><property name="text"><string>--:--</string></property></widget></item><item alignment="Qt::AlignTop|Qt::AlignRight">
                       <widget class="QLabel" name="etiquetaEnVivo">
                         <property name="text">
-                          <string>●  EN VIVO</string>
-                        </property>
-                        <property name="styleSheet">
-                          <string>color:#ff525c; background:#3a1e2b; border-radius:8px; padding:10px 14px; font-weight:bold;</string>
+                          <string>●  CÁMARA APAGADA</string>
                         </property>
                       </widget>
                     </item>
@@ -275,7 +263,7 @@
                           <property name="bottomMargin">
                             <number>12</number>
                           </property>
-                          <!-- Estado de la cámara -->
+                          
                           <item>
                             <layout class="QHBoxLayout" name="filaEtiquetaVivo">
                               <item>
@@ -300,7 +288,7 @@
                               </item>
                             </layout>
                           </item>
-                          <!-- Visor donde aparecerá el vídeo -->
+                          
                           <item>
                             <widget class="QLabel" name="textoVistaVacia">
                               <property name="sizePolicy">
@@ -317,13 +305,13 @@
                               </property>
                             </widget>
                           </item>
-                          <!-- Información inferior -->
+                          
                           <item>
                             <layout class="QHBoxLayout" name="pieVideo">
                               <item>
                                 <widget class="QLabel" name="textoModelos">
                                   <property name="text">
-                                    <string>Visión: conecta aquí tu modelo YOLO y PersonReID</string>
+                                    <string>Modelos: YOLO11n · PersonReID</string>
                                   </property>
                                 </widget>
                               </item>
@@ -385,21 +373,21 @@
                           <item>
                             <widget class="QLabel" name="tituloControlCamara">
                               <property name="text">
-                                <string>▣  Control de Cámara</string>
+                                <string>Control de Cámara</string>
                               </property>
                             </widget>
                           </item>
                           <item>
                             <widget class="QPushButton" name="btnIniciarCamara">
                               <property name="text">
-                                <string>▶   Iniciar Cámara</string>
+                                <string>▶  Iniciar cámara</string>
                               </property>
                             </widget>
                           </item>
                           <item>
                             <widget class="QPushButton" name="btnDetenerCamara">
                               <property name="text">
-                                <string>■   Detener Cámara</string>
+                                <string>■  Detener cámara</string>
                               </property>
                             </widget>
                           </item>
@@ -421,26 +409,26 @@
                             </widget>
                           </item>
                           <item>
+                            <widget class="QPushButton" name="btnIrEstadisticas">
+                              <property name="text">
+                                <string>Abrir estadísticas</string>
+                              </property>
+                            </widget>
+                          </item>
+                        <item><widget class="QLabel" name="tituloActividad"><property name="text"><string>Actividad reciente</string></property></widget></item><item><widget class="QListWidget" name="listaActividad"><property name="focusPolicy"><enum>Qt::NoFocus</enum></property><property name="selectionMode"><enum>QAbstractItemView::NoSelection</enum></property></widget></item><item>
                             <spacer name="espacioControles">
                               <property name="orientation">
                                 <enum>Qt::Vertical</enum>
                               </property>
-                              <property name="sizeHint">
+                              <property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint">
                                 <size>
                                   <width>20</width>
-                                  <height>30</height>
+                                  <height>0</height>
                                 </size>
                               </property>
                             </spacer>
                           </item>
-                          <item>
-                            <widget class="QPushButton" name="btnIrEstadisticas">
-                              <property name="text">
-                                <string>▥   Abrir Estadísticas</string>
-                              </property>
-                            </widget>
-                          </item>
-                        </layout>
+                          </layout>
                       </widget>
                     </item>
                   </layout>
@@ -456,7 +444,7 @@
                           <item>
                             <widget class="QLabel" name="etiquetaDetectadas">
                               <property name="text">
-                                <string>♧  Personas Detectadas</string>
+                                <string>Personas detectadas</string>
                               </property>
                             </widget>
                           </item>
@@ -476,7 +464,7 @@
                           <item>
                             <widget class="QLabel" name="etiquetaReconocidas">
                               <property name="text">
-                                <string>◎  Personas Reconocidas</string>
+                                <string>Personas reconocidas</string>
                               </property>
                             </widget>
                           </item>
@@ -490,13 +478,14 @@
                         </layout>
                       </widget>
                     </item>
-                    <item>
+                    <item><widget class="QFrame" name="tarjetaNoAutorizadas"><layout class="QVBoxLayout" name="layoutNoAutorizadas"><item><widget class="QLabel" name="etiquetaNoAutorizadas"><property name="text"><string>No autorizadas</string></property></widget></item><item><widget class="QLabel" name="valorNoAutorizadas"><property name="text"><string>—</string></property></widget></item></layout></widget></item>
+                    <item><widget class="QFrame" name="tarjetaDesconocidos"><layout class="QVBoxLayout" name="layoutDesconocidos"><item><widget class="QLabel" name="etiquetaDesconocidos"><property name="text"><string>Sin identificar</string></property></widget></item><item><widget class="QLabel" name="valorDesconocidos"><property name="text"><string>—</string></property></widget></item></layout></widget></item><item>
                       <widget class="QFrame" name="tarjetaOcupacion">
                         <layout class="QVBoxLayout" name="layoutOcupacion">
                           <item>
                             <widget class="QLabel" name="etiquetaOcupacion">
                               <property name="text">
-                                <string>⌂  Ocupación del Aula</string>
+                                <string>Ocupación del aula</string>
                               </property>
                             </widget>
                           </item>
@@ -507,7 +496,7 @@
                               </property>
                             </widget>
                           </item>
-                        </layout>
+                        <item><widget class="QProgressBar" name="barraOcupacion"><property name="maximum"><number>100</number></property><property name="value"><number>0</number></property><property name="textVisible"><bool>false</bool></property></widget></item><item><widget class="QLabel" name="estadoOcupacion"><property name="text"><string>Sin datos</string></property></widget></item></layout>
                       </widget>
                     </item>
                   </layout>
@@ -536,7 +525,7 @@
                     <item>
                       <widget class="QLabel" name="tituloRegistro">
                         <property name="text">
-                          <string>◎  Registro Facial</string>
+                          <string>Registro Facial</string>
                         </property>
                       </widget>
                     </item>
@@ -603,14 +592,14 @@
                           <item>
                             <widget class="QLabel" name="tituloDatosRegistro">
                               <property name="text">
-                                <string>♙  Datos del Registro</string>
+                                <string>Datos del registro</string>
                               </property>
                             </widget>
                           </item>
                           <item>
                             <widget class="QLabel" name="etiquetaNombre">
                               <property name="text">
-                                <string>Nombre completo</string>
+                                <string>1  ·  Nombre completo</string>
                               </property>
                             </widget>
                           </item>
@@ -621,6 +610,7 @@
                               </property>
                             </widget>
                           </item>
+                          <item><widget class="QLabel" name="etiquetaPaso2"><property name="text"><string>2  ·  Consentimiento</string></property></widget></item>
                           <item>
                             <widget class="QCheckBox" name="checkConsentimiento">
                               <property name="text">
@@ -628,6 +618,7 @@
                               </property>
                             </widget>
                           </item>
+                          <item><widget class="QLabel" name="etiquetaPaso3"><property name="text"><string>3  ·  Fotografía</string></property></widget></item>
                           <item>
                             <widget class="QLabel" name="estadoCaptura">
                               <property name="text">
@@ -641,25 +632,26 @@
                           <item>
                             <widget class="QPushButton" name="btnCapturarRostro">
                               <property name="text">
-                                <string>▣   Capturar rostro</string>
+                                <string>Capturar rostro</string>
                               </property>
                             </widget>
                           </item>
+                          <item><widget class="QLabel" name="etiquetaPaso4"><property name="text"><string>4  ·  Guardar</string></property></widget></item>
                           <item>
                             <widget class="QPushButton" name="btnGuardarRegistro">
                               <property name="text">
-                                <string>▣   Guardar registro</string>
+                                <string>Guardar registro</string>
                               </property>
                             </widget>
                           </item>
                           <item>
                             <widget class="QPushButton" name="btnCancelarRegistro">
                               <property name="text">
-                                <string>×   Cancelar</string>
+                                <string>Cancelar</string>
                               </property>
                             </widget>
                           </item>
-                          <item>
+                          <item><widget class="QLabel" name="consejosRegistro"><property name="text"><string>&lt;b style=&quot;color:#eaf5ff;&quot;&gt;💡 Consejos para una buena foto&lt;/b&gt;&lt;br/&gt;☀  Buena luz de frente, sin contraluz&lt;br/&gt;👤  Mira de frente a la cámara&lt;br/&gt;🕶  Sin lentes oscuros ni gorra&lt;br/&gt;1️⃣  Solo una persona en la imagen</string></property><property name="textFormat"><enum>Qt::RichText</enum></property><property name="wordWrap"><bool>true</bool></property></widget></item><item>
                             <spacer name="espacioRegistro">
                               <property name="orientation">
                                 <enum>Qt::Vertical</enum>
@@ -701,7 +693,7 @@
                     <item>
                       <widget class="QLabel" name="tituloPersonas">
                         <property name="text">
-                          <string>♧  Personas Registradas</string>
+                          <string>Personas Registradas</string>
                         </property>
                       </widget>
                     </item>
@@ -714,15 +706,13 @@
                     </item>
                   </layout>
                 </item>
+                <item><layout class="QHBoxLayout" name="tarjetasPersonas"><property name="spacing"><number>14</number></property><item><widget class="QFrame" name="tarjetaPersonasAutorizadas"><layout class="QVBoxLayout" name="layoutPersonasAutorizadas"><item><widget class="QLabel" name="etiquetaPersonasAutorizadas"><property name="text"><string>Autorizadas</string></property></widget></item><item><widget class="QLabel" name="valorPersonasAutorizadas"><property name="text"><string>—</string></property></widget></item></layout></widget></item><item><widget class="QFrame" name="tarjetaPersonasNoAutorizadas"><layout class="QVBoxLayout" name="layoutPersonasNoAutorizadas"><item><widget class="QLabel" name="etiquetaPersonasNoAutorizadas"><property name="text"><string>No autorizadas</string></property></widget></item><item><widget class="QLabel" name="valorPersonasNoAutorizadas"><property name="text"><string>—</string></property></widget></item></layout></widget></item><item><widget class="QFrame" name="tarjetaPersonasUltima"><layout class="QVBoxLayout" name="layoutPersonasUltima"><item><widget class="QLabel" name="etiquetaPersonasUltima"><property name="text"><string>Último registro</string></property></widget></item><item><widget class="QLabel" name="valorPersonasUltima"><property name="text"><string>—</string></property></widget></item></layout></widget></item></layout></item>
                 <item>
                   <layout class="QHBoxLayout" name="barraPersonas">
                     <item>
                       <widget class="QLabel" name="totalPersonas">
                         <property name="text">
                           <string>Total de personas: —</string>
-                        </property>
-                        <property name="styleSheet">
-                          <string>background:#123a39; border:1px solid #18b878; border-radius:8px; padding:10px;</string>
                         </property>
                       </widget>
                     </item>
@@ -748,7 +738,7 @@
                           </size>
                         </property>
                         <property name="placeholderText">
-                          <string>⌕   Buscar por nombre...</string>
+                          <string>Buscar por nombre...</string>
                         </property>
                       </widget>
                     </item>
@@ -757,7 +747,7 @@
                 <item>
                   <widget class="QLabel" name="ayudaTablaPersonas">
                     <property name="text">
-                      <string>Cuando conectes la base de datos, aquí aparecerán las personas, su autorización y las acciones disponibles.</string>
+                      <string>Personas con rostro registrado. Usa el ícono de basurero de cada fila para eliminar a una persona.</string>
                     </property>
                     <property name="wordWrap">
                       <bool>true</bool>
@@ -836,7 +826,7 @@
                     <item>
                       <widget class="QLabel" name="tituloConfiguracion">
                         <property name="text">
-                          <string>⚙  Configuración</string>
+                          <string>Configuración</string>
                         </property>
                       </widget>
                     </item>
@@ -860,7 +850,7 @@
                     <item row="0" column="0">
                       <widget class="QFrame" name="tarjetaConfigCamara">
                         <layout class="QVBoxLayout" name="layoutConfigCamara">
-                          <property name="leftMargin">
+                          <property name="spacing"><number>12</number></property><property name="leftMargin">
                             <number>16</number>
                           </property>
                           <property name="topMargin">
@@ -875,7 +865,7 @@
                           <item>
                             <widget class="QLabel" name="tituloConfigCamara">
                               <property name="text">
-                                <string>▣  Cámara</string>
+                                <string>Cámara</string>
                               </property>
                             </widget>
                           </item>
@@ -895,13 +885,13 @@
                               </item>
                             </widget>
                           </item>
-                        </layout>
+                        <item><spacer name="espacioFinal_ConfigCamara"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint"><size><width>20</width><height>10</height></size></property></spacer></item></layout>
                       </widget>
                     </item>
                     <item row="0" column="1">
                       <widget class="QFrame" name="tarjetaConfigAula">
                         <layout class="QVBoxLayout" name="layoutConfigAula">
-                          <property name="leftMargin">
+                          <property name="spacing"><number>12</number></property><property name="leftMargin">
                             <number>16</number>
                           </property>
                           <property name="topMargin">
@@ -916,7 +906,7 @@
                           <item>
                             <widget class="QLabel" name="tituloConfigAula">
                               <property name="text">
-                                <string>⌂  Aula</string>
+                                <string>Aula</string>
                               </property>
                             </widget>
                           </item>
@@ -973,13 +963,13 @@
                               </item>
                             </layout>
                           </item>
-                        </layout>
+                        <item><spacer name="espacioFinal_ConfigAula"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint"><size><width>20</width><height>10</height></size></property></spacer></item></layout>
                       </widget>
                     </item>
                     <item row="1" column="0">
                       <widget class="QFrame" name="tarjetaConfigRostro">
                         <layout class="QVBoxLayout" name="layoutConfigRostro">
-                          <property name="leftMargin">
+                          <property name="spacing"><number>12</number></property><property name="leftMargin">
                             <number>16</number>
                           </property>
                           <property name="topMargin">
@@ -994,7 +984,7 @@
                           <item>
                             <widget class="QLabel" name="tituloConfigRostro">
                               <property name="text">
-                                <string>◎  Reconocimiento facial</string>
+                                <string>Reconocimiento facial</string>
                               </property>
                             </widget>
                           </item>
@@ -1013,13 +1003,13 @@
                               <item>
                                 <widget class="QSlider" name="controlUmbral">
                                   <property name="minimum">
-                                    <number>50</number>
+                                    <number>30</number>
                                   </property>
                                   <property name="maximum">
-                                    <number>95</number>
+                                    <number>80</number>
                                   </property>
                                   <property name="value">
-                                    <number>75</number>
+                                    <number>50</number>
                                   </property>
                                   <property name="orientation">
                                     <enum>Qt::Horizontal</enum>
@@ -1029,10 +1019,7 @@
                               <item>
                                 <widget class="QLabel" name="valorUmbral">
                                   <property name="text">
-                                    <string>0.75</string>
-                                  </property>
-                                  <property name="styleSheet">
-                                    <string>color:#18dc81; font-weight:bold; padding:6px;</string>
+                                    <string>0.50</string>
                                   </property>
                                 </widget>
                               </item>
@@ -1041,20 +1028,20 @@
                           <item>
                             <widget class="QLabel" name="notaUmbral">
                               <property name="text">
-                                <string>Un valor más alto exige mayor parecido al reconocer un rostro.</string>
+                                <string>Más alto = más estricto: menos falsos positivos, pero puede rechazar a la persona correcta. Valor inicial: 0.50.</string>
                               </property>
                               <property name="wordWrap">
                                 <bool>true</bool>
                               </property>
                             </widget>
                           </item>
-                        </layout>
+                        <item><spacer name="espacioFinal_ConfigRostro"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint"><size><width>20</width><height>10</height></size></property></spacer></item></layout>
                       </widget>
                     </item>
                     <item row="1" column="1">
                       <widget class="QFrame" name="tarjetaConfigBD">
                         <layout class="QVBoxLayout" name="layoutConfigBD">
-                          <property name="leftMargin">
+                          <property name="spacing"><number>12</number></property><property name="leftMargin">
                             <number>16</number>
                           </property>
                           <property name="topMargin">
@@ -1069,7 +1056,7 @@
                           <item>
                             <widget class="QLabel" name="tituloConfigBD">
                               <property name="text">
-                                <string>▤  Base de datos</string>
+                                <string>Base de datos</string>
                               </property>
                             </widget>
                           </item>
@@ -1085,10 +1072,10 @@
                               <property name="orientation">
                                 <enum>Qt::Vertical</enum>
                               </property>
-                              <property name="sizeHint">
+                              <property name="sizeType"><enum>QSizePolicy::Fixed</enum></property><property name="sizeHint">
                                 <size>
                                   <width>20</width>
-                                  <height>12</height>
+                                  <height>10</height>
                                 </size>
                               </property>
                             </spacer>
@@ -1096,13 +1083,10 @@
                           <item>
                             <widget class="QLabel" name="estadoBaseDatos">
                               <property name="text">
-                                <string>◉  Pendiente de comprobar</string>
+                                <string>Pendiente de comprobar</string>
                               </property>
                               <property name="alignment">
                                 <set>Qt::AlignCenter</set>
-                              </property>
-                              <property name="styleSheet">
-                                <string>color:#f5c46a; background:#352f20; border:1px solid #806534; border-radius:8px; padding:12px;</string>
                               </property>
                             </widget>
                           </item>
@@ -1142,14 +1126,14 @@
                     <item>
                       <widget class="QPushButton" name="btnGuardarConfiguracion">
                         <property name="text">
-                          <string>▣   Guardar cambios</string>
+                          <string>Guardar cambios</string>
                         </property>
                       </widget>
                     </item>
                     <item>
                       <widget class="QPushButton" name="btnRestablecerConfiguracion">
                         <property name="text">
-                          <string>↶   Restablecer valores</string>
+                          <string>Restablecer valores</string>
                         </property>
                       </widget>
                     </item>
@@ -1168,7 +1152,7 @@
                     </item>
                   </layout>
                 </item>
-              </layout>
+              <item><spacer name="espacioFinalConfiguracion"><property name="orientation"><enum>Qt::Vertical</enum></property><property name="sizeHint"><size><width>20</width><height>20</height></size></property></spacer></item></layout>
             </widget>
           </widget>
         </item>

@@ -20,8 +20,10 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
         self.ejecutando = False
         self.camara = None
         self.core = None
+        self.umbral_facial = 0.50   # la ventana lo cambia; el hilo lo aplica en su ciclo
         self.registro_pendiente = None
         self.eliminar_pendiente = None   #sacra d ela memmperia
+        self.autorizacion_pendiente = None   # (id_rostro, nuevo_valor) que deja la ventana
 
     def run(self):
         self.ejecutando = True
@@ -45,6 +47,9 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
                     break
 
             
+                # Aplicamos el umbral facial elegido en Configuración
+                self.core.comparador_rostros.umbral = self.umbral_facial
+
                 frame_procesado, datos = self.core.procesar_frame(frame)
 
                 #coonnect registramos que funcion se ejecur=tara cuando lllegue un abviso y entreagle la informacion recibida
@@ -66,6 +71,12 @@ class ProcesadorCamara(QThread):#nos permite ejcev=cutar el trabajo de esta clas
                     self.eliminar_pendiente = None    # ya no hay uno pendiente
 
                     self.core.comparador_rostros.eliminar_rostro(id_rostro)
+
+                if self.autorizacion_pendiente is not None:
+                    id_rostro, autorizado = self.autorizacion_pendiente   # separamos la nota
+                    self.autorizacion_pendiente = None                    # vaciamos el buzón
+
+                    self.core.comparador_rostros.cambiar_autorizacion(id_rostro, autorizado)
   
         except Exception as e:
             self.error.emit(f"Error en VisionCampus: {e}")

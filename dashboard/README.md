@@ -1,22 +1,43 @@
-# Dashboard de estadísticas (Streamlit)
+# Dashboard de estadísticas · VisionCampus (Elkin)
 
-**Responsable:** Elkin · **Versión objetivo:** v1.5 · **Estado:** diseño aprobado, en desarrollo
+Dashboard web en Streamlit con **datos simulados** (AULA-SIM). Solo hace consultas `SELECT` y no usa la tabla de rostros.
 
-Página web local, a pantalla completa, que lee la base de datos PostgreSQL y muestra estadísticas de ocupación de las aulas. La aplicación de escritorio solo abre esta página en el navegador con el botón *Abrir estadísticas*.
+## Cómo ejecutarlo
 
-## Contenido aprobado
+1. Crear y activar el entorno virtual dentro de `dashboard/`:
+   ```bash
+   cd dashboard
+   python -m venv .venv
+   .venv\Scripts\activate
+   pip install -r requirements.txt
+   ```
+2. Crear la base `VisionCampus` en PostgreSQL y ejecutar el script de tablas del documento de la tarea.
+3. Copiar `src/CAMPUS_INTELLIGENCE/.env.example` a `dashboard/.env` y completar tus datos. **No subas `.env` a GitHub.**
+4. Generar los datos simulados:
+   ```bash
+   python generar_datos_simulados.py
+   ```
+5. Abrir el dashboard:
+   ```bash
+   streamlit run app.py
+   ```
 
-- Filtros de aula y rango de fechas, y botón Actualizar.
-- Cuatro tarjetas: ocupación actual, estado del aula, personas ahora y promedio del día.
-- Gráfico de ocupación en el tiempo con una línea de capacidad al 100 %.
-- Barras por hora con las horas pico resaltadas.
-- Resumen estadístico: media, desviación estándar, máximo y mínimo.
-- Tabla de entradas y salidas recientes.
-- Paneles "Próximamente": anomalías, predicción con intervalo de confianza, validación y ocupación real contra programada.
-- Opcional: histograma de la ocupación e intervalo de confianza de la media.
+## Archivos
 
-## Reglas
+Cada archivo hace una sola cosa:
 
-- Se desarrolla con un aula simulada (`AULA-SIM`). Los datos simulados van siempre rotulados y **no se mezclan** con los reales al presentar resultados.
-- Las credenciales de la base se leen del archivo `.env` (ver `src/CAMPUS_INTELLIGENCE/.env.example`); nunca se escriben en el código.
-- Se trabaja en la rama `elkin/dashboard` y se une a `main` solo cuando está probado.
+| Archivo | Qué hace | ¿Estudiarlo? |
+|---|---|---|
+| `app.py` | La pantalla: qué componente va y en qué posición | Sí |
+| `datos.py` | Consultas a PostgreSQL (usa el `conectar()` de `Conexion_DB.py`) | Sí, es la lógica de datos |
+| `estadistica.py` | Todas las fórmulas: media, intervalo de confianza, probabilidades, percentiles | Sí |
+| `diseno.py` | Decoración: HTML de las tarjetas, colores y estilo de los gráficos | No |
+| `estilo.css` | Solo colores y bordes (como el `.qss` de la app de escritorio) | No |
+| `datos_demo.py` | Modo demostración: datos simulados en memoria si no hay base | No |
+| `generar_datos_simulados.py` | Llena AULA-SIM con 5 días de datos por minuto (repetible) | Opcional |
+| `requirements.txt` | Versiones de las librerías | No |
+| `EXPLICACION_MATEMATICA.md` | Explicación de la parte estadística y del reconocimiento | Sí |
+
+Orden de lectura recomendado: `datos.py` (de dónde salen los datos), `estadistica.py` (qué se calcula) y `app.py` (cómo se junta todo).
+
+Los datos de `generar_datos_simulados.py` se generan con una semilla fija, así que siempre salen iguales.

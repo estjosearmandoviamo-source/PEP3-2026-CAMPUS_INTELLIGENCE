@@ -83,6 +83,10 @@ class VisionCampusCore:
                 # Interruptor para dibujar la malla y los puntos del rostro
         self.dibujar_puntos = False
 
+        # Eventos nuevos (entradas/salidas) que la interfaz todavía no mostró
+        self.eventos_nuevos = []
+        self.modo_anonimo = False
+
     # ============================================================
     # 2. REGISTRAR EVENTOS
     # ============================================================
@@ -90,6 +94,9 @@ class VisionCampusCore:
     def Registrar_Evento(self, tipo, id_persona, hora, permanencia):
 
         horadb = datetime.fromtimestamp(hora)
+
+        # Lo dejamos en el "buzón" para que la interfaz lo muestre en Actividad reciente
+        self.eventos_nuevos.append((tipo, id_persona, hora, permanencia))
 
         if tipo == "ENTRADA":
 
@@ -794,40 +801,51 @@ class VisionCampusCore:
 # ========================================================
 
         personas_reconocidas = 0
+        personas_no_autorizadas = 0
 
-        if self.reconocimiento_activo:
+        if self.reconocimiento_activo and self.modo_anonimo == False :
 
            rostros = self.detector_facial.detectar(frame)          # buscar caras
 
            for rostro in rostros:
 
-            nombre, similitud = self.comparador_rostros.comparar(rostro.embedding)
+            nombre, similitud, autorizado = self.comparador_rostros.comparar(rostro.embedding)
 
             if nombre is None:
                nombre = "no conocido"
             else:
                personas_reconocidas += 1                       # contamos a los reconocidos
-
+            if autorizado ==False:
+                            personas_no_autorizadas += 1
+                            color_caja = (0, 0, 255)        
+                            color_texto = (0, 0, 255)
+                            texto = "NO AUTORIZADO"
+            else:
+                            
+                            color_caja = (255, 0, 0)        
+                            color_texto = (0, 255, 0)       
+                            texto = F"{nombre}|{similitud:.2f}"
+            
             izq, arriba, der, abajo = rostro.bbox               # esquinas del cuadro
 
             cv2.rectangle(
             frame_resultados,
             (int(izq), int(arriba)),
             (int(der), int(abajo)),
-            (255, 0, 0),
+            color_caja,
             2
         )
 
             cv2.putText(
             frame_resultados,
-            f"{nombre} {similitud:.2f}",
+            texto,
             (int(izq), int(arriba) - 10),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.6,
-            (0, 255, 0),
+           color_texto,
             1
         )
-            if self.dibujar_puntos:
+            if self.dibujar_puntos :
                 self.dibujar_malla_y_puntos(frame_resultados, rostro)
          # ========================================================
                 # DEVOLVER IMAGEN Y ESTADÍSTICAS A LA INTERFAZ
@@ -836,8 +854,11 @@ class VisionCampusCore:
         estadisticas = {
                     "personas": self.aula1.personas,
                     "ocupacion": self.aula1.ocupacion,
-                    "estado": self.aula1.estado,"reconocidas": personas_reconocidas
+                    "estado": self.aula1.estado,"reconocidas": personas_reconocidas,
+                    "capacidad": self.aula1.capacidad,
+                    "eventos": self.eventos_nuevos,"no_autorizados" : personas_no_autorizadas
                 }
+        self.eventos_nuevos = []   # vaciamos el buzón: esos eventos ya van a la interfaz
         
         return frame_resultados, estadisticas
 

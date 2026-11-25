@@ -125,6 +125,8 @@ def porcentaje_solapamiento(caja_a, caja_b):
 
 empezar_dibujo_reconocimiento = False   # empieza apagado
 
+modo_anonimo = False
+
 while True:
     
     ret, frame = camara.read()
@@ -497,7 +499,7 @@ while True:
 
 
 
-    if empezar_dibujo_reconocimiento:
+    if empezar_dibujo_reconocimiento and modo_anonimo == False:
         rostros = detector_facial.detectar(frame)        
         for rostro in rostros:                           
             puntos = rostro.landmark_2d_106#(X,Y)CADAPUNTO
@@ -523,23 +525,33 @@ while True:
 
             cv2.addWeighted(capa, 0.4, frame_resultados, 0.6, 0, frame_resultados)
 
-            nombre, similitud  = comparador_rostros.comparar(rostro.embedding)   
+            nombre, similitud,autorizado  = comparador_rostros.comparar(rostro.embedding)   
             if nombre is None:
                 nombre = "no conocido"
 
             x1, y1, x2, y2 = rostro.bbox   
+            if autorizado ==False:
+                color_caja = (0, 0, 255)        # rojo (en OpenCV es BGR)
+                color_texto = (0, 0, 255)
+                texto = "NO AUTORIZADO"
+            else:
+                
+                color_caja = (255, 0, 0)        # azul, como lo tienes hoy
+                color_texto = (0, 255, 0)       # verde, como lo tienes hoy
+                texto = F"{nombre}|{similitud:.2f}"
+
 
             cv2.rectangle(             frame_resultados, 
                                         (int(x1), int(y1)), 
                                         (int(x2), int(y2)), 
-                                        (255, 0, 0),
+                                        color_caja,
                                          2)
             
             cv2.putText(                frame_resultados, 
-                                        F"{nombre}|{similitud:.2f}", 
+                                        texto, 
                                         (int(x1), int(y1) - 10),
                                          cv2.FONT_HERSHEY_SIMPLEX, 1, 
-                                         (0, 255, 0),
+                                         color_texto,
                                          1)
 
             for punto_rostro in rostro.kps:
@@ -579,6 +591,9 @@ while True:
 
     
     tecla = cv2.waitKey(1)
+
+    if tecla == ord("a") or tecla == ord("A"):
+        modo_anonimo = not modo_anonimo
  
     # REGISTRO FACIAL
     if tecla == ord("r") or tecla == ord("R"):

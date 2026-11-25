@@ -23,7 +23,7 @@ class RostrosDB:
             return None
     def mostrar_Registro(self):
         try:
-            self.CURSOR.execute("SELECT id_rostro, nombre, huella_facial FROM rostros_registrados ")
+            self.CURSOR.execute("SELECT id_rostro, nombre, huella_facial, autorizado FROM rostros_registrados ")
                                         
             filas = self.CURSOR.fetchall()#en c# es registro por registro aca es en una lista comppleatr con tupl
             return filas
