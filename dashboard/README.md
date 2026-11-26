@@ -33,7 +33,6 @@ Cada archivo hace una sola cosa:
 | `estadistica.py` | Todas las fórmulas: media, intervalo de confianza, probabilidades, percentiles | Sí |
 | `diseno.py` | Decoración: HTML de las tarjetas, colores y estilo de los gráficos | No |
 | `estilo.css` | Solo colores y bordes (como el `.qss` de la app de escritorio) | No |
-| `datos_demo.py` | Modo demostración: datos simulados en memoria si no hay base | No |
 | `generar_datos_simulados.py` | Llena AULA-SIM con 5 días de datos por minuto (repetible) | Opcional |
 | `requirements.txt` | Versiones de las librerías | No |
 | `EXPLICACION_MATEMATICA.md` | Explicación de la parte estadística y del reconocimiento | Sí |

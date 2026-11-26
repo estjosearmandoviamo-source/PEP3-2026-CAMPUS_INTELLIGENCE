@@ -10,7 +10,7 @@ import diseno as d
 import estadistica as est
 from datos import (
     cargar_aulas, cargar_eventos, cargar_ocupacion, cargar_todos_eventos,
-    modo_demostracion, rango_de_fechas,
+     rango_de_fechas,
 )
 
 st.set_page_config(page_title="VisionCampus · Estadísticas", layout="wide")
@@ -19,7 +19,7 @@ d.cargar_estilo()
 # =====================================================================
 # CABECERA
 # =====================================================================
-d.cabecera(modo_demostracion())
+d.cabecera(False)
 
 # =====================================================================
 # FILTROS: aula y periodo
