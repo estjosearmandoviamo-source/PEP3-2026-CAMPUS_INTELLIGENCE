@@ -7,6 +7,45 @@ Materia: Probabilidad y Estadística I · Proyecto PEP3 2026
 
 ---
 
+## Propuesta de valor (en palabras simples)
+
+**Para quién:** universidades, institutos y colegios que tienen muchas aulas y quieren usarlas mejor.
+
+**Qué resuelve y qué ahorra**
+
+| Problema | Qué hace VisionCampus | Qué se ahorra |
+|---|---|---|
+| Nadie sabe cuántas personas usan un aula | Cuenta personas en tiempo real y guarda cada entrada y salida | **Tiempo:** no hay que revisar aula por aula ni anotar a mano |
+| Hay aulas vacías mientras otras están llenas | Muestra las horas pico y un mapa de calor por día y hora | **Espacio:** se aprovechan mejor las aulas que ya existen |
+| Las decisiones se toman a ojo | Da estadísticas y probabilidades de uso | **Errores:** se decide con datos y no con suposiciones |
+
+**Qué lo hace diferente:** no solo cuenta personas. También reconoce a voluntarios registrados, mide cuánto tiempo permanece cada uno y calcula la probabilidad de que alguien entre en una hora determinada, todo en un solo sistema.
+
+### Preguntas frecuentes
+
+**¿Por qué creemos que es vendible?**
+Porque resuelve un problema real: hoy nadie sabe cómo se usan realmente las aulas. VisionCampus entrega ese dato en tiempo real y sin que nadie lo anote.
+
+**¿Por qué es rentable?**
+Usa equipo común (una cámara y un computador) y se instala aula por aula. El cliente empieza con una y crece solo si le sirve.
+
+**¿Cuánto dinero ahorra?**
+Todavía no lo medimos, y por eso no damos cifras. Para calcularlo proponemos una prueba en un aula, con datos reales.
+
+**¿Y la privacidad?**
+El sistema es anónimo por defecto y tiene un modo que oculta los nombres. Solo se reconoce a voluntarios que autorizan su registro.
+
+**¿Qué tan preciso es?**
+Se probó con datos reales y simulados. Falta probarlo con más personas y calibrar el reconocimiento facial (ver sección 7).
+
+**¿Se puede vender tal como está?**
+No todavía. Es un proyecto académico: para uso comercial habría que revisar las licencias de los modelos usados (YOLO y el modelo facial).
+
+**¿Cómo empezar?**
+Con **un aula piloto**: se instala, se mide durante un tiempo y con esos datos se decide si se amplía.
+
+---
+
 ## 1. El problema
 
 La universidad sabe qué aula está **programada** ("el aula P6 se usa de 8 a 10"), pero no sabe cómo se **usa realmente**:
